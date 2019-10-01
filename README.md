@@ -1,5 +1,5 @@
 # Hansung_Dormitory_Manager
-domitory managing platform
+-domitory managing platform
 
 
 motive for development
