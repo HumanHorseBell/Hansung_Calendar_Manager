@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".JoinActivity"/>
+        <activity android:name=".AddGroupFragment"/>
     </application>
 
 </manifest>
