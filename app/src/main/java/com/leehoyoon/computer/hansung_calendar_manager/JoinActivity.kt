@@ -1,4 +1,4 @@
-package com.example.kjhapplication
+package com.humanhorsebell.computer.hansung_calendar_manager
 
 
 import android.os.Bundle
@@ -12,7 +12,7 @@ import java.util.*
  */
 class JoinActivity : AppCompatActivity() {
 
-    public override fun onCreate(savedInstanceState: Bundle) {
+    public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_join)
 

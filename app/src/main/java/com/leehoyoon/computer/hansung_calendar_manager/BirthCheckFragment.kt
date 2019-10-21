@@ -1,4 +1,4 @@
-package com.example.kjhapplication
+package com.humanhorsebell.computer.hansung_calendar_manager
 
 import android.app.DatePickerDialog
 import android.app.Dialog
