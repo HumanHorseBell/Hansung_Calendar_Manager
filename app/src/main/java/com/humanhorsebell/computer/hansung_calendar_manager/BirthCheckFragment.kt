@@ -30,7 +30,7 @@ class BirthCheckFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {
         // Do something with the date chosen by the user
         val activity = activity as JoinActivity              // JoinActivity의 birthday 버튼에 접근하기 위해 액티비티 객체 선언
-        activity.birthcheckbtn.setText(year.toString() + "년 " + (month + 1) + "월 " + day + "일") // 유저가 선택한 날짜로 버튼 텍스트 변경
+        activity.birthcheckbtn.setText(year.toString() + "/" + (month + 1) + "/" + day) // 유저가 선택한 날짜로 버튼 텍스트 변경
     }
 }
 
