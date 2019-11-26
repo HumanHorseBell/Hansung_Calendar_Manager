@@ -14,7 +14,7 @@
         android:layout_gravity="top|center"
         android:layout_weight="0"
         android:text="Join"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="@color/colorAccent"
         android:textSize="40sp" />
 
     <LinearLayout

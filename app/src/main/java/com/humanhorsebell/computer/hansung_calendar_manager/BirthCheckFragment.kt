@@ -19,7 +19,7 @@ class BirthCheckFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Use the current date as the default date in the picker
         val c = Calendar.getInstance()      // 오늘 날짜로 디폴트값을 설정하기 위해 캘린더 객체 선언
-        val year = c.get(Calendar.YEAR)
+        val year = c.get(Calendar.YEAR)-30//지금 애기들 안쓰니 약 20~60이 쓸테니 현재보다 30년전
         val month = c.get(Calendar.MONTH)              // MONTH : 0~11
         val day = c.get(Calendar.DAY_OF_MONTH)
 
