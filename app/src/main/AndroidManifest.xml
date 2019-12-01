@@ -17,7 +17,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".JoinActivity"/>
-        <activity android:name=".AddGroupFragment"/>
+        <activity android:name=".AddGroupActivity"/>
+        <activity android:name=".AddGroupMemActivity"/>
+        <activity android:name=".Add_Category"/>
+        <activity android:name=".ShowGroup"/>
     </application>
 
 </manifest>

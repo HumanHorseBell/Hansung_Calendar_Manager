@@ -49,10 +49,10 @@ class LoginActivity : AppCompatActivity() {
 
 
                         //맞으면 그룹원추가로. -> 나중에 바꾸기
-                        val intent2 = Intent(this@LoginActivity, AddGroupFragment::class.java)
+                        val intent2 = Intent(this@LoginActivity, Add_Category::class.java)
                         //기본키넘김=>얘로 나중에 사용자누군지 계속 구분해야지
-                        intent2.putExtra("userNo",child.key)
-                        //Toast.makeText(this@LoginActivity,child.key,Toast.LENGTH_SHORT).show()
+                        intent2.putExtra("userNo",child.key.toString())
+                        Toast.makeText(this@LoginActivity,child.key.toString(),Toast.LENGTH_SHORT).show()
                         startActivity(intent2)
 
                     }

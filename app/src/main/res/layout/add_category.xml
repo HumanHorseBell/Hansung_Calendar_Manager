@@ -2,23 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="30dp"
     android:gravity="center"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/editTextemail"
+    <Button
+        android:id="@+id/addGroupbtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:gravity="center"
-        android:hint="초대할 email입력"
-        android:inputType="textPersonName" />
+        android:text="그룹추가" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/addGroupMembtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"/>
-
+        android:text="그룹원 추가" />
 </LinearLayout>
