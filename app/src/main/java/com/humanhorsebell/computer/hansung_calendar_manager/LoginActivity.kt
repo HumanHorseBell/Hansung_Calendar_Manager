@@ -22,8 +22,8 @@ class LoginActivity : AppCompatActivity() {
         //현재 로그인시 바로 그룹추가 fragment사용-> 나중에 바꾸기
         //그룹추가 DatePicker사용
         loginbtn.setOnClickListener {
-            val intent2 = Intent(this, AddGroupFragment::class.java)
-            startActivity(intent2)
+            //val intent2 = Intent(this, AddGroupFragment::class.java)
+            //startActivity(intent2)
         }
     }
 }
