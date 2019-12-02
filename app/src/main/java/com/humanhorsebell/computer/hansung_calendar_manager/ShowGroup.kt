@@ -31,12 +31,10 @@ class ShowGroup : AppCompatActivity() {
         //현재 그룹명을 list에 저장
         databasegroup.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                Log.i("kjharu","**********")
                 for (child in dataSnapshot.children) {
 
                     if(child.child("grpMem").child(userNo).value.toString().equals("true")) {
                         groupList.add(child.key.toString())
-                        Log.i("kjharu",child.key.toString())
                     }
                     else{
                         //Log.i("kjharu",)
@@ -58,7 +56,7 @@ class ShowGroup : AppCompatActivity() {
         listviewGroup.onItemClickListener = AdapterView.OnItemClickListener{parent, view, position, id ->
             val intent2 = Intent(this,AddGroupMemActivity::class.java)
             intent2.putExtra("userNo",userNo)
-            intent2.putExtra("GroupName",groupList.get(position))
+            intent2.putExtra("groupName",groupList.get(position))
             startActivity(intent2)
         }
 

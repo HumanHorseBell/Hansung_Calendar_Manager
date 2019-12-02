@@ -2,14 +2,17 @@ package com.humanhorsebell.computer.hansung_calendar_manager
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.custom_adduser.*
 import kotlinx.android.synthetic.main.listview_addgroup.*
 
 
@@ -20,6 +23,8 @@ class AddGroupMemActivity : AppCompatActivity() {
     var groupMemList = ArrayList<String?>()
     //var groupUserList = arrayOf("김지현", "이호윤", "최지은", "김진민")
     lateinit var groupName : String
+    lateinit var inputemail : EditText
+    lateinit var adapter1 : ArrayAdapter<String?>
 
     //그룹에 있는 유저 List에 저장
 
@@ -29,7 +34,7 @@ class AddGroupMemActivity : AppCompatActivity() {
 
         groupName = intent.getStringExtra("groupName")
 
-        val adapter1 = ArrayAdapter(this, android.R.layout.simple_list_item_1, groupMemList)
+        adapter1 = ArrayAdapter(this, android.R.layout.simple_list_item_1, groupMemList)
 
         listviewGroup.adapter = adapter1
 
@@ -40,9 +45,7 @@ class AddGroupMemActivity : AppCompatActivity() {
                 for (child in dataSnapshot.children) {
 
                     if(child.child("group").child(groupName).value.toString().equals("true")) {
-
-                        groupMemList.add(child.child("name").toString())
-
+                        groupMemList.add(child.child("name").value.toString())
 
                     }
                 }
@@ -66,12 +69,14 @@ class AddGroupMemActivity : AppCompatActivity() {
        // val layoutInflater = layoutInflater
         val view = layoutInflater.inflate(R.layout.custom_adduser, null)
 
+        inputemail = view.findViewById<EditText>(R.id.editTextemail)
+
         builder.setView(view)
         builder.setTitle("그룹원 추가")
 
         //확인 눌렀을때 => 사용자추가(중복체크 후)
         builder.setPositiveButton("확인") { dialog, which ->
-            databaseusers.addListenerForSingleValueEvent(checkLogin)
+            databaseusers.addListenerForSingleValueEvent(checkEmail)
             //유저가 있는지 확인
 
         }
@@ -80,16 +85,20 @@ class AddGroupMemActivity : AppCompatActivity() {
         builder.create().show()
     }
 
-    //로그인 확인
+    //그룹원 이메일로 추가
     //email있는지 확인
-    val checkLogin = object : ValueEventListener {
-        var checkEmail=false
+    val checkEmail = object : ValueEventListener {
+        var checkemail=false
         override fun onDataChange(dataSnapshot: DataSnapshot) {
 
             for (child in dataSnapshot.children) {
+                Log.i("kjharu",child.child("email").value.toString())
                 //이멜있나
-                if (child.child("email").value.toString().equals(editTextID.text.toString())) {
-                    checkEmail=true
+                if (child.child("email").value.toString().equals(inputemail.text.toString())) {
+
+                    checkemail=true
+                    //리스트에 넣어주기
+                    groupMemList.add(child.child("name").value.toString())
                     //user->group->그룹이름:true해주기
                     databaseusers.child(child.key.toString()).child("group").child(groupName).setValue("true")
 
@@ -98,9 +107,16 @@ class AddGroupMemActivity : AppCompatActivity() {
                 }
             }
             //이멜 못찾음
-            if(!checkEmail){
+            if(!checkemail){
                 Dialogmessage(this@AddGroupMemActivity,"경고","없는 이메일이예요.")
             }
+            else{
+                adapter1.notifyDataSetChanged()
+                adapter1.notifyDataSetInvalidated()
+                Dialogmessage(this@AddGroupMemActivity,"알림","그 분..추가했어요.")
+
+            }
+
         }
 
         override fun onCancelled(databaseError: DatabaseError) {}
