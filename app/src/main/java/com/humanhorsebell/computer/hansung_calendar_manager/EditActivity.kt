@@ -36,17 +36,10 @@ class EditActivity : AppCompatActivity() {
     private fun insertMode() {//삽입모드 초기화
  //       deleteFab.visibility= View.GONE
         doneFab.setOnClickListener {
-        /*    val dialogplus  = DialogPlus.newDialog(this)
-                    .setAdapter(adapter)
-                    .setOnItemClickListener(OnItemClickListener(){ dialogPlus: DialogPlus, any: Any, view: View, position: Int ->
 
-                    })
-                    .setExpanded(true)
-                    .create()
-            dialogplus.show()
-            insertTodo()
+             insertTodo()
 
-*/
+
     }}
 
     private fun updateMode(id: Long) {//수정모드 초기화
