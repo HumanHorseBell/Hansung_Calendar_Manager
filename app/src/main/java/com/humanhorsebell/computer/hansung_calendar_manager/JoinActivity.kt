@@ -16,7 +16,7 @@ import com.google.firebase.database.ValueEventListener
  */
 class JoinActivity : AppCompatActivity() {
     val firebaseReference: FirebaseDatabase = FirebaseDatabase.getInstance()
-    val database = firebaseReference.reference.child("users")
+    val database = firebaseReference.reference.child("user")
     var overlap: Boolean = false
     var id: Int = 0 //현재 사용자 갯수 세어서 user기본키로 두려구
     var checkbitrh = false
@@ -51,7 +51,7 @@ class JoinActivity : AppCompatActivity() {
                         //이메일를 key로 이름 넣어주기
                         database.child(id.toString()).child("name").setValue(editTextName.text.toString())
                         //비번넣어주기
-                        database.child(id.toString()).child("password").setValue(edittextNewPW1.text.toString())
+                        database.child(id.toString()).child("passwd").setValue(edittextNewPW1.text.toString())
                         //생일넣어주기
                         database.child(id.toString()).child("birth").setValue(birthcheckbtn.text.toString())
                         //Toast.makeText(getApplicationContext(), id.toString() + " : 회원가입 되었습니다.", Toast.LENGTH_SHORT).show()

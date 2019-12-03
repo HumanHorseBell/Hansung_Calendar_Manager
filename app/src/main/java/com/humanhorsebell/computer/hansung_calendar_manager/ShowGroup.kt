@@ -34,7 +34,7 @@ class ShowGroup : AppCompatActivity() {
                 for (child in dataSnapshot.children) {
 
                     if(child.child("grpMem").child(userNo).value.toString().equals("true")) {
-                        groupList.add(child.key.toString())
+                        groupList.add(child.child("grpName").value.toString())
                     }
                     else{
                         //Log.i("kjharu",)

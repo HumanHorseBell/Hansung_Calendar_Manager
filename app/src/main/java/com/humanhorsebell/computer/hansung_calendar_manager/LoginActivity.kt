@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_join.*
  */
 class LoginActivity : AppCompatActivity() {
     val firebaseReference: FirebaseDatabase = FirebaseDatabase.getInstance()
-    val database = firebaseReference.reference.child("users")
+    val database = firebaseReference.reference.child("user")
     var findEmail = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +45,7 @@ class LoginActivity : AppCompatActivity() {
                 if (child.child("email").value.toString().equals(editTextID.text.toString())) {
                     findEmail = true
                     //비번맞으면
-                    if(child.child("password").value.toString().equals(editTextPW.text.toString())){
+                    if(child.child("passwd").value.toString().equals(editTextPW.text.toString())){
 
 
                         //맞으면 그룹원추가로. -> 나중에 바꾸기

@@ -11,17 +11,19 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.activity_join.*
 import kotlinx.android.synthetic.main.custom_addgroup.*
 
 
 class AddGroupActivity : AppCompatActivity() {
     val firebaseReference: FirebaseDatabase = FirebaseDatabase.getInstance()
-    val databaseusers = firebaseReference.reference.child("users")
+    val databaseusers = firebaseReference.reference.child("user")
     val databasegroup = firebaseReference.reference.child("group")
 
     var checkGName = false //그룹이름 없으면 false 있으면 true
     lateinit var groupname : EditText
     lateinit var userNo : String
+    var id: Int = 0 //현재 사용자 갯수 세어서 user기본키로 두려구
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,12 +38,20 @@ class AddGroupActivity : AppCompatActivity() {
         builder.setView(view)
         builder.setTitle("그룹 추가")
 
+        databasegroup.addListenerForSingleValueEvent(checkGroup)
+
         //확인 눌렀을때 => 그룹이름 중복 확인
         builder.setPositiveButton("확인"){ dialogInterface, i ->
             //override fun onClick(dialog: DialogInterface?, which: Int) {
-                databasegroup.addListenerForSingleValueEvent(checkGroup)
 
-            //}
+            //group->0->grpName : value
+            databasegroup.child(id.toString()).child("grpName").setValue(groupname.text.toString())
+            //group->0->grpMem ->
+            databasegroup.child(id.toString()).child("grpMem").child(userNo).setValue("true")
+            //user->userNo->group->그룹아이디 : true
+            databaseusers.child(userNo).child("group").child(id.toString()).setValue("true")
+
+            finish()
         }
 
         //취소 눌렀을때 => 그냥 끄기
@@ -56,28 +66,8 @@ class AddGroupActivity : AppCompatActivity() {
         //checkEmail=false
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             for (child in dataSnapshot.children) {
-                //이미 있는 그룹이름
-                if(child.key.toString().equals(groupname.text.toString())){
-                    checkGName = true
-                }
-                else{
-
-                }
-
+                id = dataSnapshot.childrenCount.toInt()
             }
-            if (checkGName.equals(false)) {
-                //그룹에 그룹추가 + 맴버에 나추가
-                databasegroup.child(groupname.text.toString()).child("grpMem").child(userNo).setValue("true")
-                //나의 그룹정보에 userNo->group->그룹이름:true
-                databaseusers.child(userNo).child("group").child(groupname.text.toString()).setValue("true")
-                finish()
-            }
-            //그룹이름 중복
-            else {
-                Dialogmessage(this@AddGroupActivity, "경고", "이미 존재하는 그룹이름이예요","close")
-
-            }
-
         }
         override fun onCancelled(databaseError: DatabaseError) {}
     }

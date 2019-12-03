@@ -18,13 +18,14 @@ import kotlinx.android.synthetic.main.listview_addgroup.*
 
 class AddGroupMemActivity : AppCompatActivity() {
     val firebaseReference: FirebaseDatabase = FirebaseDatabase.getInstance()
-    val databaseusers = firebaseReference.reference.child("users")
+    val databaseusers = firebaseReference.reference.child("user")
     val databasegroup = firebaseReference.reference.child("group")
     var groupMemList = ArrayList<String?>()
     //var groupUserList = arrayOf("김지현", "이호윤", "최지은", "김진민")
-    lateinit var groupName : String
+    lateinit var groupName : String //넘어온거
     lateinit var inputemail : EditText
     lateinit var adapter1 : ArrayAdapter<String?>
+    lateinit var groupNo : String //그룹 기본키
 
     //그룹에 있는 유저 List에 저장
 
@@ -33,6 +34,25 @@ class AddGroupMemActivity : AppCompatActivity() {
         setContentView(R.layout.listview_addgroup)
 
         groupName = intent.getStringExtra("groupName")
+
+        databasegroup.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                for (child in dataSnapshot.children) {
+
+                    if(child.child("grpName").value.toString().equals(groupName)) {
+                        groupNo = child.key.toString()
+
+                    }
+                }
+                adapter1.notifyDataSetChanged()
+                adapter1.notifyDataSetInvalidated()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+            }
+        })
 
         adapter1 = ArrayAdapter(this, android.R.layout.simple_list_item_1, groupMemList)
 
@@ -44,7 +64,7 @@ class AddGroupMemActivity : AppCompatActivity() {
 
                 for (child in dataSnapshot.children) {
 
-                    if(child.child("group").child(groupName).value.toString().equals("true")) {
+                    if(child.child("group").child(groupNo).value.toString().equals("true")) {
                         groupMemList.add(child.child("name").value.toString())
 
                     }
@@ -100,10 +120,10 @@ class AddGroupMemActivity : AppCompatActivity() {
                     //리스트에 넣어주기
                     groupMemList.add(child.child("name").value.toString())
                     //user->group->그룹이름:true해주기
-                    databaseusers.child(child.key.toString()).child("group").child(groupName).setValue("true")
+                    databaseusers.child(child.key.toString()).child("group").child(groupNo).setValue("true")
 
                     //group->그룹이름->grpMem->추가한 유저 추가
-                    databasegroup.child(groupName).child("grpMem").child(child.key.toString()).setValue("true")
+                    databasegroup.child(groupNo).child("grpMem").child(child.key.toString()).setValue("true")
                 }
             }
             //이멜 못찾음
