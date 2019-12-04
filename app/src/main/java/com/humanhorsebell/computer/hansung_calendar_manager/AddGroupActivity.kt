@@ -45,11 +45,11 @@ class AddGroupActivity : AppCompatActivity() {
             //override fun onClick(dialog: DialogInterface?, which: Int) {
 
             //group->0->grpName : value
-            databasegroup.child(id.toString()).child("grpName").setValue(groupname.text.toString())
+            databasegroup.child("g"+id.toString()).child("grpName").setValue(groupname.text.toString())
             //group->0->grpMem ->
-            databasegroup.child(id.toString()).child("grpMem").child(userNo).setValue("true")
+            databasegroup.child("g"+id.toString()).child("grpMem").child(userNo).setValue("true")
             //user->userNo->group->그룹아이디 : true
-            databaseusers.child(userNo).child("group").child(id.toString()).setValue("true")
+            databaseusers.child(userNo).child("group").child("g"+id.toString()).setValue("true")
 
             finish()
         }

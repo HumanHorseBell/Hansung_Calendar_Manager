@@ -47,13 +47,13 @@ class JoinActivity : AppCompatActivity() {
                     //비번같은지 확인
                     if (edittextNewPW1.text.toString() == edittextNewPW2.text.toString()) {
                         //kkey에 이메일 넣기
-                        database.child(id.toString()).child("email").setValue(editTextNewID.text.toString())
+                        database.child("u"+id.toString()).child("email").setValue(editTextNewID.text.toString())
                         //이메일를 key로 이름 넣어주기
-                        database.child(id.toString()).child("name").setValue(editTextName.text.toString())
+                        database.child("u"+id.toString()).child("name").setValue(editTextName.text.toString())
                         //비번넣어주기
-                        database.child(id.toString()).child("passwd").setValue(edittextNewPW1.text.toString())
+                        database.child("u"+id.toString()).child("passwd").setValue(edittextNewPW1.text.toString())
                         //생일넣어주기
-                        database.child(id.toString()).child("birth").setValue(birthcheckbtn.text.toString())
+                        database.child("u"+id.toString()).child("birth").setValue(birthcheckbtn.text.toString())
                         //Toast.makeText(getApplicationContext(), id.toString() + " : 회원가입 되었습니다.", Toast.LENGTH_SHORT).show()
                         Dialogmessage(this@JoinActivity,"알림","회원가입 되었어요.")
                         finish()
