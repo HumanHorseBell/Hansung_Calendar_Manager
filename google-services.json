@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "24750219931",
+    "firebase_url": "https://hansung-calendar.firebaseio.com",
+    "project_id": "hansung-calendar",
+    "storage_bucket": "hansung-calendar.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24750219931:android:f7b13802a3e184e2d2dc3e",
+        "android_client_info": {
+          "package_name": "com.leehoyoon.computer.hansung_calendar_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "24750219931-vkvjjmfkd3e6kll292aqadihkf955odc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leehoyoon.computer.hansung_calendar_manager",
+            "certificate_hash": "bde8611c44e8045bd24c2870a3257d82a05f5e52"
+          }
+        },
+        {
+          "client_id": "24750219931-h4ev5732d9qp5bl4otp560u92tci99s3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leehoyoon.computer.hansung_calendar_manager",
+            "certificate_hash": "e7e515871b100bd73ea0758c096de64d672b5e7c"
+          }
+        },
+        {
+          "client_id": "24750219931-7vs1tqipmo8p9b46i3dm7723eihncgn5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLJE3-3hW1h7BsmjWAa3MlOpIsh36DPaY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "24750219931-7vs1tqipmo8p9b46i3dm7723eihncgn5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
