@@ -103,53 +103,29 @@
         android:orientation="horizontal">
 
 
-        <TextView
-
+        <Button
             android:id="@+id/btn_cancel"
-
-            android:layout_width="wrap_content"
-
+            android:layout_width="102dp"
             android:layout_height="40dp"
-
             android:layout_weight="1"
-
             android:background="#424242"
-
-            android:clickable="true"
-
             android:gravity="center"
-
             android:text="취소"
-
             android:textColor="#ffffff"
-
             android:textSize="16dp"
-
             android:textStyle="bold" />
 
-
-        <TextView
-
+        <Button
             android:id="@+id/btn_ok"
-
             android:layout_width="wrap_content"
-
             android:layout_height="40dp"
-
             android:layout_weight="1"
-
             android:background="#424242"
-
             android:clickable="true"
-
             android:gravity="center"
-
             android:text="확인"
-
             android:textColor="#ffffff"
-
             android:textSize="16dp"
-
             android:textStyle="bold" />
 
     </LinearLayout>
