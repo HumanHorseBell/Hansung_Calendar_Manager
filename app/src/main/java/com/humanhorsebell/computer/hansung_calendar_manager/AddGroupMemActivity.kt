@@ -7,25 +7,28 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.custom_adduser.*
 import kotlinx.android.synthetic.main.listview_addgroup.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AddGroupMemActivity : AppCompatActivity() {
     val firebaseReference: FirebaseDatabase = FirebaseDatabase.getInstance()
     val databaseusers = firebaseReference.reference.child("user")
     val databasegroup = firebaseReference.reference.child("group")
+    lateinit var databaseschedule : DatabaseReference
     var groupMemList = ArrayList<String?>()
     //var groupUserList = arrayOf("김지현", "이호윤", "최지은", "김진민")
     lateinit var groupName : String //넘어온거
     lateinit var inputemail : EditText
     lateinit var adapter1 : ArrayAdapter<String?>
     lateinit var groupNo : String //그룹 기본키
+    lateinit var thisyearbirth : String
+    var scheduleid : Int = 0
+    lateinit var userName : String
 
     //그룹에 있는 유저 List에 저장
 
@@ -112,10 +115,12 @@ class AddGroupMemActivity : AppCompatActivity() {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
 
             for (child in dataSnapshot.children) {
-                Log.i("kjharu",child.child("email").value.toString())
+                //Log.i("kjharu",child.child("email").value.toString())
                 //이멜있나
                 if (child.child("email").value.toString().equals(inputemail.text.toString())) {
 
+                    val userBirth = child.child("birth").value.toString().split("-").toTypedArray()
+                    Log.i("kjharu",child.child("birth").value.toString())
                     checkemail=true
                     //리스트에 넣어주기
                     groupMemList.add(child.child("name").value.toString())
@@ -124,6 +129,17 @@ class AddGroupMemActivity : AppCompatActivity() {
 
                     //group->그룹이름->grpMem->추가한 유저 추가
                     databasegroup.child(groupNo).child("grpMem").child(child.key.toString()).setValue("true")
+
+                    //추가되는 유저의 생일 추가
+                    //올해로 생일 년도 바꿔주기
+                    val c = Calendar.getInstance()
+                    thisyearbirth  = c.get(Calendar.YEAR).toString()+"-"+userBirth[1]+"-"+userBirth[2]
+
+                    databaseschedule = databasegroup.child(groupNo).child("schedule")
+                    databaseschedule.child(thisyearbirth).addListenerForSingleValueEvent(checkscheduleID)
+
+                    userName = child.child("name").value.toString()
+
                 }
             }
             //이멜 못찾음
@@ -141,4 +157,29 @@ class AddGroupMemActivity : AppCompatActivity() {
 
         override fun onCancelled(databaseError: DatabaseError) {}
     }
+
+    val checkscheduleID = object : ValueEventListener {
+        //checkEmail=false
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            for (child in dataSnapshot.children) {
+                scheduleid = dataSnapshot.childrenCount.toInt()
+                Log.i("kjharu","value " + scheduleid.toString())
+            }
+            //group->g1->schedule->user의 생일->키->startDate : vlaue(생일)
+            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("startDate").setValue(thisyearbirth)
+            //group->g1->schedule->user의 생일->키->startTime : vlaue(00:00)
+            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("startTime").setValue("00:00")
+            //group->g1->schedule->user의 생일->키->endDate : vlaue(생일)
+            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("endDate").setValue(thisyearbirth)
+            //group->g1->schedule->user의 생일->키->endTime : vlaue(23:59)
+            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("endTime").setValue("11:59")
+            //group->g1->schedule->user의 생일->키->name : vlaue("생일")
+            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("name").setValue("생일")
+            //group->g1->schedule->user의 생일->키->memo : vlaue(추가mem name + "생일")
+            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("memo").setValue(userName+"님의 생일")
+
+        }
+        override fun onCancelled(databaseError: DatabaseError) {}
+    }
+
 }
