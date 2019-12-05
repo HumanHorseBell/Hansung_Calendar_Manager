@@ -4,10 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.View
-import android.widget.BaseAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ListView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.humanbell.TodoListAdapter
@@ -27,7 +24,17 @@ class EditActivity : AppCompatActivity() {
     val databaseUser = FirebaseDatabase.getInstance().reference.child("user")
     val databaseGroup = FirebaseDatabase.getInstance().reference.child("group")
 
+    var group: Group? = null;
+
+    //임의로 user결정 및 group 결정
+    val curUser = "user0"
+    val curGroup = "0"
+    val database =  FirebaseDatabase.getInstance().reference.child("group").child(curGroup).child("schedule").child("2019-12-05")
+    val todoName = ArrayList<String>()
+    lateinit var myAdapter: BaseAdapter
+
     var grpMems = ArrayList<String>()
+    var schedules = ArrayList<Todo>()
     var items = ArrayList<Todo>()
     lateinit var adapter: BaseAdapter
     lateinit var itemList: ListView
@@ -48,12 +55,16 @@ class EditActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit)
         insertMode()
 
+        myAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.todoName)
+
         adapter = TodoListAdapter(this, items)
         //날짜마다 List 달라져야 함
         itemList = findViewById<View>(R.id.todoListView) as ListView
-        itemList.adapter = adapter
+        //itemList.adapter = adapter
+        itemList.adapter = myAdapter
         //임의로 넣어 둔 것
         items.add(Todo("test", "a", "a", "a", "a", "a", Comment("a", "a", "a", "a")))
+        todoName.add("sibal")
 
         adapter.notifyDataSetChanged()
         adapter.notifyDataSetInvalidated()
@@ -64,30 +75,28 @@ class EditActivity : AppCompatActivity() {
             calendar.set(Calendar.MONTH, month)
             calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         }
+        //val curDate:String? = Calendar.YEAR.toString() + "-" + Calendar.MONTH.toString() + "-" + Calendar.DAY_OF_MONTH
+        val sibal = "2019-12-05"
 
-        /*databaseGroup.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(dataSnapshot: DatabaseError) {
-                //안써도 됨
-            }
+        //val query = database.orderByChild("startDate").equalTo(sibal)
+        database.addListenerForSingleValueEvent(valueEventListener);
+    }
 
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (groupData in dataSnapshot.children) {
-                    // child 내에 있는 데이터만큼 반복
-                    val grpMemName = groupData.child("grpMem").value.toString()
-                    val productkey = productData.key
-                    val productName = productData.child("name").value.toString()
+    var valueEventListener: ValueEventListener = object : ValueEventListener {
+        override fun onCancelled(p0: DatabaseError) { }
 
-                    if(productkey!=null) {
-                        productkeylist.add(productName)
-                        val goods = Goods(productkey,productName)
-                        arraylist.add(goods)
-                        adapter.notifyDataSetChanged()
-                        adapter.notifyDataSetInvalidated()
-                    }
+        override fun onDataChange(p0: DataSnapshot) {
+            for(data in p0.children) {
+                val groupNum = data.key
+                val title = data.child("name")
+                if(groupNum != null) {
+                    todoName.add(groupNum.toString())
+                    myAdapter.notifyDataSetChanged()
+                    myAdapter.notifyDataSetInvalidated()
                 }
             }
+        }
 
-        })*/
     }
 
     private fun insertMode() {//삽입모드 초기화
