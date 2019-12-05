@@ -15,9 +15,9 @@
 
         <ImageView
             android:id="@+id/picture"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_margin="5px"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="20px"
             app:srcCompat="@drawable/picture" />
 
         <LinearLayout
@@ -28,13 +28,24 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/textViewGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10px"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textColor="#1F50B5"
+                android:textSize="15sp"
+                tools:text="그룹명" />
+
+            <TextView
                 android:id="@+id/textViewDay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10px"
                 android:text="날짜"
                 android:textColor="@android:color/black"
-                android:textSize="24sp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -46,5 +57,6 @@
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
         </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>
