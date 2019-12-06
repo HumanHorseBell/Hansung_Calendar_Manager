@@ -2,7 +2,10 @@ package com.humanhorsebell.computer.hansung_calendar_manager
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -49,9 +52,22 @@ class EditActivity : AppCompatActivity() {
     private var mHour = 0
     private var mMinute = 0
 
+    /*지현 추가*/
+    val firebaseReference: FirebaseDatabase = FirebaseDatabase.getInstance()
+    val databasegroup = firebaseReference.reference.child("group")
+    var groupNo : String? = null //그룹 기본키
+    lateinit var userNo : String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
+
+        /*지현 추가*/
+        if(groupNo!=null) {
+            groupNo = intent.getStringExtra("groupNo")
+        }
+        userNo = intent.getStringExtra("userNo")
+
 
         insertMode()
 
@@ -242,4 +258,23 @@ class EditActivity : AppCompatActivity() {
             dialog.dismiss()
         }
     }
+
+    //액션버튼 메뉴 액션바에 집어 넣기
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.showgroupmenu, menu)
+        return true
+    }
+
+    //액션버튼 클릭 했을 때
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId){
+            R.id.groupmenuid-> {
+                val intent2 = Intent(this@EditActivity, ShowGroup::class.java)
+                intent2.putExtra("userNo",userNo)
+                startActivity(intent2)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 }
