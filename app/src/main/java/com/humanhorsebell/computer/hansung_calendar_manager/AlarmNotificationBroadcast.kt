@@ -1,9 +1,6 @@
 package com.humanhorsebell.computer.hansung_calendar_manager
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,6 +10,10 @@ import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
+import java.text.SimpleDateFormat
+import java.util.*
+
+var alarmSchedule: Schedule? = null
 
 class AlarmNotificationBroadcast : BroadcastReceiver() {
     val channelId = "grpNo" //수정
@@ -21,9 +22,8 @@ class AlarmNotificationBroadcast : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val bundle = intent?.extras
-        val schedule = bundle?.getParcelable<Schedule>("schedule")
-
+        /*val bundle = intent?.extras
+        val schedule = bundle?.getParcelable<Schedule>("schedule")*/
 
         //버전 체크
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -39,8 +39,8 @@ class AlarmNotificationBroadcast : BroadcastReceiver() {
         val pendingIntent = PendingIntent.getActivity(context.applicationContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val contentView = RemoteViews(context.packageName, R.layout.notification_alarm)
-        contentView.setTextViewText(R.id.textViewTitle, schedule?.name)
-        contentView.setTextViewText(R.id.textViewDate, schedule?.startDate?.day)
+        contentView.setTextViewText(R.id.textViewTitle, alarmSchedule?.name)
+        contentView.setTextViewText(R.id.textViewDate, alarmSchedule?.startDate?.day)
         contentView.setImageViewBitmap(R.id.imageViewIcon, context.resources.getDrawable(R.drawable.calendar).toBitmap())
 
         builder.setDefaults(Notification.DEFAULT_ALL)
@@ -51,4 +51,23 @@ class AlarmNotificationBroadcast : BroadcastReceiver() {
                 .setContentIntent(pendingIntent)
         notificationManager.notify(0, builder.build())
     }
+}
+
+fun setAlarm(context: Context, schedule: Schedule) {
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    val notificationIntent = Intent(context, AlarmNotificationBroadcast::class.java)
+
+    val pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, 0)
+    alarmSchedule = schedule
+
+    val calendar = Calendar.getInstance()
+    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
+    val date = formatter.parse(schedule.startDate.day + " " + schedule.startDate.time)
+    calendar.time = date
+    val alarmTime = calendar.timeInMillis + 1000 * 60 * 15
+    val localTime = System.currentTimeMillis()
+    val time = Calendar.getInstance()
+    time.timeInMillis = localTime
+    alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent)
 }
