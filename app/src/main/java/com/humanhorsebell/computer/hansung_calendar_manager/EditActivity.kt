@@ -32,11 +32,15 @@ class EditActivity : AppCompatActivity() {
     var items = ArrayList<Todo>()
     lateinit var adapter: BaseAdapter
     lateinit var itemList: ListView
-    var btnDatePicker: Button? = null
-    var btnTimePicker: Button? = null
+    var btnDatePicker_start: Button? = null
+    var btnDatePicker_end: Button? = null
     var txtTitle: EditText? = null
-    var txtDate: EditText? = null
-    var txtTime: EditText? = null
+    var txt_startDate: EditText? = null
+    var txt_startTime: EditText? = null
+    var txt_endDate: EditText? = null
+    var txt_endTime: EditText? = null
+    var txt_start : TextView? =null
+    var txt_end : TextView? =null
     var switch1: Switch? = null
     var flag: Boolean = false
     private var mYear = 0
@@ -48,7 +52,19 @@ class EditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
+
         insertMode()
+
+        val calendar: Calendar = Calendar.getInstance()
+        calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        }
+
+
+        //이거슬 곧 사용할 거임
+        val curDate = Calendar.YEAR.toString() + "-" + Calendar.MONTH.toString() + "-" + Calendar.DAY_OF_MONTH
 
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.todoName)
         //날짜마다 List 달라져야 함
@@ -57,13 +73,7 @@ class EditActivity : AppCompatActivity() {
         //임의로 넣어 둔 것
         items.add(Todo("test", "a", "a", "a", "a", "a", Comment("a", "a", "a", "a")))
 
-        val calendar: Calendar = Calendar.getInstance()
-        calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            calendar.set(Calendar.YEAR, year)
-            calendar.set(Calendar.MONTH, month)
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        }
-        //val curDate:String? = Calendar.YEAR.toString() + "-" + Calendar.MONTH.toString() + "-" + Calendar.DAY_OF_MONTH
+
         val date1 = "2019-10-20"
 
         //val query = database.orderByChild("startDate").equalTo(sibal)
@@ -87,6 +97,10 @@ class EditActivity : AppCompatActivity() {
         curGrpRef.child("schedule").child(date1).addListenerForSingleValueEvent(valueEventListener)
     }
 
+    private fun totalTodo(groupNum: Int) {
+
+    }
+
     private fun insertMode() {//삽입모드 초기화
         fab.setOnClickListener {
             insertTodo()
@@ -100,48 +114,80 @@ class EditActivity : AppCompatActivity() {
         var cancelBtn: Button? = null
         var ok: Button? = null
         val view = layoutInflater.inflate(R.layout.activity_calendar_dialog_add, null, false).apply {
-            btnDatePicker = findViewById<View>(R.id.btn_date) as Button
-            btnTimePicker = findViewById<View>(R.id.btn_time) as Button
+            btnDatePicker_start = findViewById<View>(R.id.btn_start_date) as Button
+            btnDatePicker_end = findViewById<View>(R.id.btn_end_date) as Button
             txtTitle = findViewById<View>(R.id.calendar_title) as EditText
-            txtDate = findViewById<View>(R.id.in_date) as EditText
-            txtTime = findViewById<View>(R.id.in_time) as EditText
-            btnDatePicker!!.setOnClickListener {
+            txt_startDate = findViewById<View>(R.id.start_date) as EditText
+            txt_startTime = findViewById<View>(R.id.start_time) as EditText
+            txt_endDate = findViewById<View>(R.id.end_date) as EditText
+            txt_endTime = findViewById<View>(R.id.end_time) as EditText
+            txt_start = findViewById<View>(R.id.txt_startdate) as TextView
+            txt_end = findViewById<View>(R.id.txt_enddate) as TextView
+            btnDatePicker_start!!.setOnClickListener {
                 val c = Calendar.getInstance()
+                mHour = c[Calendar.HOUR_OF_DAY]
+                mMinute = c[Calendar.MINUTE]
+                // Launch Time Picker Dialog
+                val timePickerDialog = TimePickerDialog(this.context,
+                        TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute -> txt_startTime!!.setText("$hourOfDay:$minute") }, mHour, mMinute, false)
+                timePickerDialog.show()
+
                 mYear = c[Calendar.YEAR]
                 mMonth = c[Calendar.MONTH]
                 mDay = c[Calendar.DAY_OF_MONTH]
                 val datePickerDialog = DatePickerDialog(this.context,
-                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth -> txtDate!!.setText(dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year) }, mYear, mMonth, mDay)
+                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth -> txt_startDate!!
+                                .setText(year.toString()+ "-" +(monthOfYear + 1) + "-" +dayOfMonth ) }, mYear, mMonth, mDay)
                 datePickerDialog.show()
+
             }
-            btnTimePicker!!.setOnClickListener {
+            btnDatePicker_end!!.setOnClickListener {
                 val c = Calendar.getInstance()
                 mHour = c[Calendar.HOUR_OF_DAY]
                 mMinute = c[Calendar.MINUTE]
+                // Launch Time Picker Dialog
                 val timePickerDialog = TimePickerDialog(this.context,
-                        TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute -> txtTime!!.setText("$hourOfDay:$minute") }, mHour, mMinute, false)
+                        TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute -> txt_endTime!!.setText("$hourOfDay:$minute") }, mHour, mMinute, false)
                 timePickerDialog.show()
+
+                mYear = c[Calendar.YEAR]
+                mMonth = c[Calendar.MONTH]
+                mDay = c[Calendar.DAY_OF_MONTH]
+                val datePickerDialog = DatePickerDialog(this.context,
+                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth -> txt_endDate!!
+                                .setText(year.toString()+ "-" +(monthOfYear + 1) + "-" +dayOfMonth) }, mYear, mMonth, mDay)
+                datePickerDialog.show()
+
+
             }
+            cancelBtn = findViewById<View>(R.id.btn_cancel) as Button
+            ok = findViewById<View>(R.id.btn_ok) as Button
             switch1 = findViewById(R.id.switch1)
             switch1!!.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     flag = true
-                    btnDatePicker!!.visibility = View.GONE
-                    btnTimePicker!!.visibility = View.GONE
-                    txtDate!!.visibility = View.GONE
-                    txtTime!!.visibility = View.GONE
+                    btnDatePicker_end!!.visibility = View.GONE
+                    btnDatePicker_start!!.visibility = View.GONE
+                    txt_startDate!!.visibility = View.GONE
+                    txt_startTime!!.visibility = View.GONE
+                    txt_endDate!!.visibility = View.GONE
+                    txt_endTime!!.visibility = View.GONE
+                    txt_start!!.visibility=View.GONE
+                    txt_end!!.visibility=View.GONE
 
                 } else {
                     flag = false
-                    btnDatePicker!!.visibility = View.VISIBLE
-                    btnTimePicker!!.visibility = View.VISIBLE
-                    txtDate!!.visibility = View.VISIBLE
-                    txtTime!!.visibility = View.VISIBLE
+                    btnDatePicker_end!!.visibility = View.VISIBLE
+                    btnDatePicker_start!!.visibility = View.VISIBLE
+                    txt_startDate!!.visibility = View.VISIBLE
+                    txt_startTime!!.visibility = View.VISIBLE
+                    txt_endDate!!.visibility = View.VISIBLE
+                    txt_endTime!!.visibility = View.VISIBLE
+                    txt_start!!.visibility=View.VISIBLE
+                    txt_end!!.visibility=View.VISIBLE
 
                 }
             })
-            cancelBtn = findViewById<View>(R.id.btn_cancel) as Button
-            ok = findViewById<View>(R.id.btn_ok) as Button
         }
         val dialog = AlertDialog.Builder(this)
                 .setView(view)
