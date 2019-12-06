@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
 
 
                         //맞으면 그룹원추가로. -> 나중에 바꾸기
-                        val intent2 = Intent(this@LoginActivity, Add_Category::class.java)
+                        val intent2 = Intent(this@LoginActivity, EditActivity::class.java)
                         //기본키넘김=>얘로 나중에 사용자누군지 계속 구분해야지
                         intent2.putExtra("userNo",child.key.toString())
                         startActivity(intent2)
