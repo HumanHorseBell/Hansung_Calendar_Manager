@@ -24,7 +24,8 @@
         </activity>
         <activity android:name=".TimelineActivity">
         </activity>
-        <activity android:name=".WishListActivity"/>
+        <activity android:name=".WishListActivity"
+            tools:ignore="DuplicateActivity" />
         <activity android:name=".AddGroupActivity"/>
         <activity android:name=".AddGroupMemActivity"/>
         <activity android:name=".JoinActivity" />
