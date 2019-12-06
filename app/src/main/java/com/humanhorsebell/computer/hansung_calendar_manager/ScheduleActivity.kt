@@ -32,10 +32,10 @@ class ScheduleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_schedule)
 
-        userNo = "3"
-        groupNo = "0"
-        day = "2019-10-20"
-        scheduleNo = "0"
+        userNo = intent.getStringExtra("userNo")
+        groupNo = intent.getStringExtra("groupNo")
+        day = intent.getStringExtra("day")
+        scheduleNo = intent.getStringExtra("scheduleNo")
 
         scheduleListAdapter = ScheduleListAdapter(applicationContext, comments, userNo)
         listViewComment.adapter = scheduleListAdapter

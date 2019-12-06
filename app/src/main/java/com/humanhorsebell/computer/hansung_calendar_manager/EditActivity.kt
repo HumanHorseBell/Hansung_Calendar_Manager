@@ -66,7 +66,6 @@ class EditActivity : AppCompatActivity() {
         val calendar: Calendar = Calendar.getInstance()
         curDate = calendar.get(Calendar.YEAR).toString() + "-" + (calendar.get(Calendar.MONTH).toString().toInt() + 1).toString() + "-" + calendar.get(Calendar.DAY_OF_MONTH).toString()
 
-        switchActivity(applicationContext, linearLayout2)
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.todoName)
         itemList = findViewById<View>(R.id.todoListView) as ListView
         itemList.adapter = adapter
@@ -74,6 +73,8 @@ class EditActivity : AppCompatActivity() {
         //유저키, 그룹키 받아오기
         userNo = intent.getStringExtra("userNo")
         groupNo = intent.getStringExtra("groupNo")
+
+        switchActivity(applicationContext, linearLayout2, userNo, groupNo)
 
 
         if (groupNo == null)

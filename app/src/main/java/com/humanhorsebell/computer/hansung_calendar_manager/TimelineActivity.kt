@@ -30,7 +30,7 @@ class TimelineActivity : AppCompatActivity() {
         listAdapter = ListAdapter(applicationContext, allSchedules)
         listView.adapter = listAdapter
 
-        switchActivity(applicationContext, linearLayout)
+        switchActivity(applicationContext, linearLayout, userNumber, userGroup)
 
         var firebaseDatabase = FirebaseDatabase.getInstance().reference
 

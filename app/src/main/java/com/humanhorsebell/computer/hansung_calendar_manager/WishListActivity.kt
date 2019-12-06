@@ -18,7 +18,8 @@ class WishListActivity : AppCompatActivity() {
     var wishlist = ArrayList<String?>()
     val database = FirebaseDatabase.getInstance().reference
     lateinit var adapter: BaseAdapter
-    lateinit var curGrp: String
+    lateinit var userNo: String
+    var curGrp: String? = null
 
     val wishListValueEventListener: ValueEventListener = object : ValueEventListener {
         override fun onCancelled(p0: DatabaseError) {}
@@ -40,7 +41,10 @@ class WishListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wish_list)
 
-        switchActivity(applicationContext, linearBottom)
+        userNo = intent.getStringExtra("userNo")
+        curGrp = "0"
+
+        switchActivity(applicationContext, linearBottom, userNo, curGrp)
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.wishlist)
 
         val listView = findViewById<View>(R.id.wishListView) as ListView
@@ -51,8 +55,7 @@ class WishListActivity : AppCompatActivity() {
 
 
         //캘린더에서 그룹키가 넘어오므로 일단은
-        curGrp = "0"
-        database.child("group").child(curGrp).child("wishlist").addValueEventListener(wishListValueEventListener)
+        database.child("group").child(curGrp!!).child("wishlist").addValueEventListener(wishListValueEventListener)
     }
 
     private fun insertTodo() {
@@ -74,7 +77,7 @@ class WishListActivity : AppCompatActivity() {
         }
         ok!!.setOnClickListener {
             var i = 1
-            var wishRef = database.child("group").child(curGrp).child("wishlist")
+            var wishRef = database.child("group").child(curGrp!!).child("wishlist")
 
             wishRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(dataSnapshot: DatabaseError) {}
