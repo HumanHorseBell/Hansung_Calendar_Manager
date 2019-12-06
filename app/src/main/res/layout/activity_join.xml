@@ -14,7 +14,7 @@
         android:layout_gravity="top|center"
         android:layout_weight="0"
         android:text="Join"
-        android:textColor="@color/colorAccent"
+        android:textColor="#FF00A2FF"
         android:textSize="40sp" />
 
     <LinearLayout
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="60dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="#FF00D8FF"
             android:text="생년월일 체크"
             android:textSize="15sp" />
 
@@ -94,6 +94,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:ems="10"
+            android:hint="id@gmail.com"
             android:inputType="textPersonName" />
     </LinearLayout>
 
@@ -103,6 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:layout_weight="0"
+        android:backgroundTint="#B1E1FF"
         android:text="아이디 중복검사"
         android:textSize="15sp" />
 
@@ -172,7 +174,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="#FF00D8FF"
             android:text="취소"
             android:textSize="18sp" />
 
@@ -183,7 +185,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="#FF00D8FF"
             android:text="가입"
             android:textSize="18sp" />
     </LinearLayout>

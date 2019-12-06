@@ -3,13 +3,9 @@ package com.humanhorsebell.computer.hansung_calendar_manager
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_join.*
-import kotlinx.android.synthetic.main.custom_addgroup.*
 import java.util.*
 
 
@@ -26,7 +22,6 @@ class AddGroupActivity : AppCompatActivity() {
     lateinit var userBirth : Array<String>
     lateinit var thisyearbirth : String
     lateinit var userName : String
-    var scheduleid : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,25 +52,13 @@ class AddGroupActivity : AppCompatActivity() {
 
             //Toast.makeText(this,userBirth[1]+userBirth[2],Toast.LENGTH_SHORT).show()
             //올해로 생일 년도 바꿔주기
-            val c = Calendar.getInstance()
-            thisyearbirth  = c.get(Calendar.YEAR).toString()+"-"+userBirth[1]+"-"+userBirth[2]
 
-            databaseschedule = databasegroup.child("g"+id.toString()).child("schedule")
-            databaseschedule.child(thisyearbirth).addListenerForSingleValueEvent(checkscheduleID)
+            for(i in 0..9) {
 
-            //group->g1->schedule->user의 생일->키->startDate : vlaue(생일)
-            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("startDate").setValue(thisyearbirth)
-            //group->g1->schedule->user의 생일->키->startTime : vlaue(00:00)
-            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("startTime").setValue("00:00")
-            //group->g1->schedule->user의 생일->키->endDate : vlaue(생일)
-            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("endDate").setValue(thisyearbirth)
-            //group->g1->schedule->user의 생일->키->endTime : vlaue(23:59)
-            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("endTime").setValue("11:59")
-            //group->g1->schedule->user의 생일->키->name : vlaue("생일")
-            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("name").setValue("생일")
-            //group->g1->schedule->user의 생일->키->memo : vlaue(추가mem name + "생일")
-            databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("memo").setValue(userName+"님의 생일")
+                databaseschedule = databasegroup.child("g" + id.toString()).child("schedule")
+                databaseschedule.addListenerForSingleValueEvent(checkscheduleID)
 
+  }
             finish()
         }
 
@@ -113,9 +96,24 @@ class AddGroupActivity : AppCompatActivity() {
     val checkscheduleID = object : ValueEventListener {
         //checkEmail=false
         override fun onDataChange(dataSnapshot: DataSnapshot) {
-            for (child in dataSnapshot.children) {
-                scheduleid = child.childrenCount.toInt()
-                Log.i("kjharu",scheduleid.toString())
+            for(i in 0..9) {
+                val c = Calendar.getInstance()
+                thisyearbirth = (c.get(Calendar.YEAR) + i).toString() + "-" + userBirth[1] + "-" + userBirth[2]
+                val scheduleid = dataSnapshot.child(thisyearbirth).childrenCount.toInt()
+
+                //group->g1->schedule->user의 생일->키->startDate : vlaue(생일)
+                databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("startDate").setValue(thisyearbirth)
+                //group->g1->schedule->user의 생일->키->startTime : vlaue(00:00)
+                databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("startTime").setValue("00:00")
+                //group->g1->schedule->user의 생일->키->endDate : vlaue(생일)
+                databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("endDate").setValue(thisyearbirth)
+                //group->g1->schedule->user의 생일->키->endTime : vlaue(23:59)
+                databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("endTime").setValue("11:59")
+                //group->g1->schedule->user의 생일->키->name : vlaue("생일")
+                databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("name").setValue("생일")
+                //group->g1->schedule->user의 생일->키->memo : vlaue(추가mem name + "생일")
+                databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("memo").setValue(userName + "님의 생일")
+
             }
 
         }

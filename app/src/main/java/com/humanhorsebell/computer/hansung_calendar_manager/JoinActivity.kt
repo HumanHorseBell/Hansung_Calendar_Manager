@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_join.*
 import com.google.firebase.database.DatabaseError
-import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
 
@@ -55,8 +54,8 @@ class JoinActivity : AppCompatActivity() {
                         //생일넣어주기
                         database.child("u"+id.toString()).child("birth").setValue(birthcheckbtn.text.toString())
                         //Toast.makeText(getApplicationContext(), id.toString() + " : 회원가입 되었습니다.", Toast.LENGTH_SHORT).show()
-                        Dialogmessage(this@JoinActivity,"알림","회원가입 되었어요.")
-                        finish()
+                        Dialogmessage(this@JoinActivity,"알림","회원가입 되었어요.", "close")
+                        //finish()
                     } else {
                         //비번두개가 동일하지않아.
                         Dialogmessage(this@JoinActivity,"경고","비번 확인해주세요.")

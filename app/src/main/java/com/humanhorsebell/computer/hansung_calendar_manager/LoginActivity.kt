@@ -4,13 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_login.*
-import android.R.*
-import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.activity_join.*
 
 /**
  * Created by lovel on 2019-10-21.
@@ -52,7 +49,6 @@ class LoginActivity : AppCompatActivity() {
                         val intent2 = Intent(this@LoginActivity, Add_Category::class.java)
                         //기본키넘김=>얘로 나중에 사용자누군지 계속 구분해야지
                         intent2.putExtra("userNo",child.key.toString())
-                        Toast.makeText(this@LoginActivity,child.key.toString(),Toast.LENGTH_SHORT).show()
                         startActivity(intent2)
 
                     }

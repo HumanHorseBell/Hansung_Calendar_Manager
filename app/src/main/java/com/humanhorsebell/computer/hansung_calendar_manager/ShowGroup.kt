@@ -2,8 +2,6 @@ package com.humanhorsebell.computer.hansung_calendar_manager
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
@@ -35,9 +33,6 @@ class ShowGroup : AppCompatActivity() {
 
                     if(child.child("grpMem").child(userNo).value.toString().equals("true")) {
                         groupList.add(child.child("grpName").value.toString())
-                    }
-                    else{
-                        //Log.i("kjharu",)
                     }
                 }
 
