@@ -2,56 +2,62 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#809CE8F0"
     android:orientation="vertical"
-    android:padding="20dp"
     android:visibility="visible">
 
     <LinearLayout
-        android:id="@+id/linearLayoutMessage"
-        android:layout_width="match_parent"
+        android:id="@+id/linearLayoutItem"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="visible">
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/schedule_list_item_layout"
+        android:backgroundTint="#809CE8F0"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        <TextView
-            android:id="@+id/textViewWriter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Writer"
-            android:textColor="@android:color/black"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/textViewColon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" : "
-            android:textColor="@android:color/black"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/textViewMessage"
+        <LinearLayout
+            android:id="@+id/linearLayoutMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Message"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
-    </LinearLayout>
+            android:orientation="horizontal"
+            android:visibility="visible">
 
-    <LinearLayout
-        android:id="@+id/linearLayoutInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/textViewWriter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Writer"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textViewTime"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/textViewMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="270dp"
+                android:padding="5dp"
+                android:text="Message"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutInfo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Date and Time"
-            android:textColor="@android:color/black" />
+            android:gravity="right"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/textViewTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date and Time"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
