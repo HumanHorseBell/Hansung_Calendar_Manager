@@ -13,23 +13,30 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ScheduleActivity">
-        </activity>
+        <activity android:name=".ScheduleActivity"></activity>
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity android:name=".TimelineActivity">
+        <activity android:name=".TimelineActivity"></activity>
+        <activity
+            android:name=".WishListActivity"
+            tools:ignore="DuplicateActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
-        <activity android:name=".WishListActivity"
-            tools:ignore="DuplicateActivity" />
-        <activity android:name=".AddGroupActivity"/>
-        <activity android:name=".AddGroupMemActivity"/>
+        <activity android:name=".AddGroupActivity" />
+        <activity android:name=".AddGroupMemActivity" />
+        <activity android:name=".ShowGroup"/>
         <activity android:name=".JoinActivity" />
         <activity android:name=".EditActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
         </activity>
 
         <receiver android:name=".AlarmNotificationBroadcast">

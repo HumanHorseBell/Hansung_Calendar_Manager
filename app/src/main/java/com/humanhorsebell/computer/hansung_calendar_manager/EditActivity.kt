@@ -10,11 +10,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_edit.*
+import kotlinx.android.synthetic.main.activity_timeline.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -24,30 +24,25 @@ class EditActivity : AppCompatActivity() {
     val groupRef = database.child("group")
     val userRef = database.child("user")
 
-    var group: Group? = null;
-
-    //임의로 user결정 및 group 결정 나중에 intent로 받아올 것. curUser를
-    val curUser = "0"
-    val curGroup = "0"
     lateinit var curDate: String
-    val curGrpRef = groupRef.child(curGroup)
     val todoName = ArrayList<String>()
 
     var groupkeys = ArrayList<String>()
-    var groups: Group? = null
     lateinit var adapter: BaseAdapter
     lateinit var itemList: ListView
     var astarty = "1"
 
+    var selectedNum: String? = null
+    var selectedGrp: String? = null
+
     //유저키, 그룹키 intent로 받아오기
-    lateinit var userNo : String
-    lateinit var groupNo : String
+    lateinit var userNo: String
+    var groupNo: String? = null
 
     //일정의 제목DB만 가져오는 -
     val todoNameValueEventListener: ValueEventListener = object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) { }
+        override fun onCancelled(p0: DatabaseError) {}
         override fun onDataChange(p0: DataSnapshot) {
-            todoName.clear()
             for (data in p0.children) {
                 val groupNum: String? = data.key
                 val title = data.child("name")
@@ -65,35 +60,40 @@ class EditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
+
+        insertMode()
+
+        val calendar: Calendar = Calendar.getInstance()
+        curDate = calendar.get(Calendar.YEAR).toString() + "-" + (calendar.get(Calendar.MONTH).toString().toInt() + 1).toString() + "-" + calendar.get(Calendar.DAY_OF_MONTH).toString()
+
+        switchActivity(applicationContext, linearLayout2)
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.todoName)
+        itemList = findViewById<View>(R.id.todoListView) as ListView
+        itemList.adapter = adapter
+
+        //유저키, 그룹키 받아오기
+        userNo = intent.getStringExtra("userNo")
+        groupNo = intent.getStringExtra("groupNo")
+
+
+        if (groupNo == null)
+            astarty = "0"
+
         if (astarty.equals("0")) {
             fab.visibility = View.GONE
         } else {
             fab.visibility = View.VISIBLE
         }
 
-        //유저키, 그룹키 받아오기
-        userNo = intent.getStringExtra("userNo")
-        groupNo = intent.getStringExtra("groupNo")
-
-        insertMode()
-
-        val calendar: Calendar = Calendar.getInstance()
-        curDate = calendar.get(Calendar.YEAR).toString() + "-" + (calendar.get(Calendar.MONTH).toString().toInt()+1).toString() + "-" + calendar.get(Calendar.DAY_OF_MONTH).toString()
-
-
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.todoName)
-        itemList = findViewById<View>(R.id.todoListView) as ListView
-        itemList.adapter = adapter
-
         //유저의 속한 그룹 찾기
-        userRef.child(curUser).child("group").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) { }
+        userRef.child(userNo).child("group").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 groupkeys.clear()
                 for (data in dataSnapshot.children) {
                     var groupKey = data.key
-                    if(groupKey != null) {
+                    if (groupKey != null) {
                         groupkeys.add(groupKey.toString())
                     }
                 }
@@ -104,27 +104,71 @@ class EditActivity : AppCompatActivity() {
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             todoName.clear()
             calendar.set(Calendar.YEAR, year)
-            calendar.set(Calendar.MONTH, month+1)
+            calendar.set(Calendar.MONTH, month + 1)
             calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-            curDate = year.toString() + "-" + ((month.toString()).toInt()+1).toString() + "-" + dayOfMonth
+            curDate = year.toString() + "-" + ((month.toString()).toInt() + 1).toString() + "-" + dayOfMonth
             adapter.notifyDataSetChanged()
             adapter.notifyDataSetInvalidated()
-            totalTodo(groupkeys)    //이걸로 전체 일정 받아오니까 그룹버튼 눌렀을 때 따로 조건 처리
+            allOrOneGrp(groupNo)
         }
-        totalTodo(groupkeys)    //이걸로 전체 일정 받아오니까 그룹버튼 눌렀을 때 따로 조건 처리
+        allOrOneGrp(groupNo)
+
+
+        itemList.setOnItemClickListener { parent, view, position, id ->
+            var clickTodo = todoName[position]
+            for (grp in groupkeys) {
+                perGrpTodoDetail(clickTodo, grp)
+            }
+        }
+    }
+
+    private fun allOrOneGrp(grpNum: String?) {
+        if (grpNum != null) {
+            perGrpTodo(grpNum!!)
+        } else {
+            totalTodo(groupkeys)
+        }
     }
 
     //전체 일정 보여주기(그룹이 하나라면 하나만 보여지겠쥬?)
     private fun totalTodo(grpKey: ArrayList<String>) {
-        for(grp in grpKey) {
+        for (grp in grpKey) {
             perGrpTodo(grp)
         }
     }
 
     //그룹별 일정 보여주기
     private fun perGrpTodo(groupNum: String) {
-        groupRef.child(groupNum).child("schedule").child(curDate).addListenerForSingleValueEvent(todoNameValueEventListener)
+        groupRef.child(groupNum).child("schedule").child(curDate).addValueEventListener(todoNameValueEventListener)
+    }
+
+    private fun perGrpTodoDetail(itemName: String, groupNum: String) {
+        groupRef.child(groupNum).child("schedule").child(curDate).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+
+            override fun onDataChange(p0: DataSnapshot) {
+                for (data in p0.children) {
+                    var todoKey = data.key
+                    var curTodoName = data.child("name").value.toString()
+                    Log.i("@@@@@@", "curTodoName : " + curTodoName)
+                    if (curTodoName.equals(itemName)) {
+                        selectedNum = todoKey
+                        selectedGrp = groupNum
+
+                        val intent = Intent(this@EditActivity, ScheduleActivity::class.java)
+                        intent.putExtra("userNo", userNo)
+                        intent.putExtra("groupNo", selectedGrp)
+                        intent.putExtra("day", curDate)
+                        intent.putExtra("scheduleNo", selectedNum)
+                        startActivity(intent)
+
+                        Log.i("@@@@@@", "intent값 확인 : " + userNo + selectedGrp + curDate + selectedNum)
+                    }
+                }
+            }
+
+        })
     }
 
     private fun insertMode() {
@@ -175,8 +219,10 @@ class EditActivity : AppCompatActivity() {
                 mMonth = c[Calendar.MONTH]
                 mDay = c[Calendar.DAY_OF_MONTH]
                 val datePickerDialog = DatePickerDialog(this.context,
-                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth -> txt_startDate!!
-                                .setText(year.toString()+ "-" +(monthOfYear + 1) + "-" +dayOfMonth ) }, mYear, mMonth, mDay)
+                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                            txt_startDate!!
+                                    .setText(year.toString() + "-" + (monthOfYear + 1) + "-" + dayOfMonth)
+                        }, mYear, mMonth, mDay)
                 datePickerDialog.show()
 
             }
@@ -193,8 +239,10 @@ class EditActivity : AppCompatActivity() {
                 mMonth = c[Calendar.MONTH]
                 mDay = c[Calendar.DAY_OF_MONTH]
                 val datePickerDialog = DatePickerDialog(this.context,
-                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth -> txt_endDate!!
-                                .setText(year.toString()+ "-" +(monthOfYear + 1) + "-" +dayOfMonth) }, mYear, mMonth, mDay)
+                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                            txt_endDate!!
+                                    .setText(year.toString() + "-" + (monthOfYear + 1) + "-" + dayOfMonth)
+                        }, mYear, mMonth, mDay)
                 datePickerDialog.show()
 
 
@@ -211,8 +259,8 @@ class EditActivity : AppCompatActivity() {
                     txt_startTime!!.visibility = View.GONE
                     txt_endDate!!.visibility = View.GONE
                     txt_endTime!!.visibility = View.GONE
-                    txt_start!!.visibility=View.GONE
-                    txt_end!!.visibility=View.GONE
+                    txt_start!!.visibility = View.GONE
+                    txt_end!!.visibility = View.GONE
 
                 } else {
                     flag = false
@@ -222,8 +270,8 @@ class EditActivity : AppCompatActivity() {
                     txt_startTime!!.visibility = View.VISIBLE
                     txt_endDate!!.visibility = View.VISIBLE
                     txt_endTime!!.visibility = View.VISIBLE
-                    txt_start!!.visibility=View.VISIBLE
-                    txt_end!!.visibility=View.VISIBLE
+                    txt_start!!.visibility = View.VISIBLE
+                    txt_end!!.visibility = View.VISIBLE
 
                 }
             })
@@ -239,29 +287,26 @@ class EditActivity : AppCompatActivity() {
             var i = 1
             var j = 0
             if (flag == true) {
-                var wishRef = database.child("group").child(curGroup.toString()).child("wishlist")
+                var wishRef = database.child("group").child(groupNo!!).child("wishlist")
 
                 wishRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onCancelled(dataSnapshot: DatabaseError) { }
+                    override fun onCancelled(dataSnapshot: DatabaseError) {}
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         for (data in dataSnapshot.children) {
-                            var wishListNum = data.key
                             i++
                         }
                         wishRef.child("wishlist" + i).setValue(txtTitle!!.text.toString()!!)
                     }
                 })
-            //위시리스트
+                //위시리스트
             } else {
-                var todo = database.child("group").child(curGroup).child("schedule").child(txt_startDate!!.text.toString()!!)
+                var todo = database.child("group").child(groupNo!!).child("schedule").child(txt_startDate!!.text.toString()!!)
                 todo.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onCancelled(dataSnapshot: DatabaseError) {}
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         for (data in dataSnapshot.children) {
-                            var todoListNum = data.key
                             j++
                         }
-
                         todo.child(j.toString()).child("endDate").setValue(txt_endDate!!.text.toString())
                         todo.child(j.toString()).child("endTime").setValue(txt_endTime!!.text.toString())
                         //                       todo.child(i.toString()).child("memo").setValue(txtTitle!!.text.toString()!!)
@@ -275,22 +320,22 @@ class EditActivity : AppCompatActivity() {
         }
     }
 
-//액션버튼 메뉴 액션바에 집어 넣기
-override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-    menuInflater.inflate(R.menu.showgroupmenu, menu)
-    return true
-}
-
-//액션버튼 클릭 했을 때
-override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-    when(item?.itemId){
-        R.id.groupmenuid-> {
-            val intent2 = Intent(this@EditActivity, ShowGroup::class.java)
-            intent2.putExtra("userNo",userNo)
-            startActivity(intent2)
-        }
+    //액션버튼 메뉴 액션바에 집어 넣기
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.showgroupmenu, menu)
+        return true
     }
-    return super.onOptionsItemSelected(item)
-}
+
+    //액션버튼 클릭 했을 때
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.groupmenuid -> {
+                val intent2 = Intent(this@EditActivity, ShowGroup::class.java)
+                intent2.putExtra("userNo", userNo)
+                startActivity(intent2)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
 }
