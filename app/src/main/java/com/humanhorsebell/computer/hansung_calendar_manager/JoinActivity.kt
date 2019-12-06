@@ -10,9 +10,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ValueEventListener
 
 
-/**
- * Created by lovel on 2019-10-21.
- */
 class JoinActivity : AppCompatActivity() {
     val firebaseReference: FirebaseDatabase = FirebaseDatabase.getInstance()
     val database = firebaseReference.reference.child("user")

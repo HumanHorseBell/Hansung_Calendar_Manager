@@ -1,125 +1,144 @@
 package com.humanhorsebell.computer.hansung_calendar_manager
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.util.Log
 import android.view.View
 import android.widget.*
+import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.humanbell.TodoListAdapter
-import com.example.humanbell.TodoListDialogAdapter
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_calendar_dialog_add.*
 import kotlinx.android.synthetic.main.activity_edit.*
-import org.w3c.dom.Text
 import java.util.*
-
 import kotlin.collections.ArrayList
 
 
 class EditActivity : AppCompatActivity() {
     val database = FirebaseDatabase.getInstance().reference
-    val ref = database.child("group")
+    val groupRef = database.child("group")
+    val userRef = database.child("user")
 
     var group: Group? = null;
 
-    //임의로 user결정 및 group 결정
-    val curUser = "user0"
+    //임의로 user결정 및 group 결정 나중에 intent로 받아올 것. curUser를
+    val curUser = "0"
     val curGroup = "0"
-    val curGrpRef = FirebaseDatabase.getInstance().reference.child("group").child(curGroup)
+    lateinit var curDate: String
+    val curGrpRef = groupRef.child(curGroup)
     val todoName = ArrayList<String>()
-    lateinit var myAdapter: BaseAdapter
 
-    var grpMems = ArrayList<String>()
-    var schedules = ArrayList<Todo>()
-    var items = ArrayList<Todo>()
+    var groupkeys = ArrayList<String>()
+    var groups: Group? = null
     lateinit var adapter: BaseAdapter
     lateinit var itemList: ListView
+    var astarty = "1"
 
-    private var mYear = 0
-    private var mMonth = 0
-    private var mDay = 0
-    private var mHour = 0
-    private var mMinute = 0
+    //일정의 제목DB만 가져오는 -
+    val todoNameValueEventListener: ValueEventListener = object : ValueEventListener {
+        override fun onCancelled(p0: DatabaseError) { }
+        override fun onDataChange(p0: DataSnapshot) {
+            todoName.clear()
+            for (data in p0.children) {
+                val groupNum: String? = data.key
+                val title = data.child("name")
+                if (groupNum != null) {
+                    todoName.add(title.value.toString())
+                    adapter.notifyDataSetChanged()
+                    adapter.notifyDataSetInvalidated()
+                }
+            }
+        }
 
-    /*지현 추가*/
-    val firebaseReference: FirebaseDatabase = FirebaseDatabase.getInstance()
-    val databasegroup = firebaseReference.reference.child("group")
-    var groupNo : String? = null //그룹 기본키
-    lateinit var userNo : String
+    }
 
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
-
-        /*지현 추가*/
-        if(groupNo!=null) {
-            groupNo = intent.getStringExtra("groupNo")
+        if (astarty.equals("0")) {
+            fab.visibility = View.GONE
+        } else {
+            fab.visibility = View.VISIBLE
         }
-        userNo = intent.getStringExtra("userNo")
-
 
         insertMode()
 
         val calendar: Calendar = Calendar.getInstance()
-        calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            calendar.set(Calendar.YEAR, year)
-            calendar.set(Calendar.MONTH, month)
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        }
-        //val curDate:String? = Calendar.YEAR.toString() + "-" + Calendar.MONTH.toString() + "-" + Calendar.DAY_OF_MONTH
-        val sibal = "2019-12-05"
+        curDate = calendar.get(Calendar.YEAR).toString() + "-" + (calendar.get(Calendar.MONTH).toString().toInt()+1).toString() + "-" + calendar.get(Calendar.DAY_OF_MONTH).toString()
 
-        //val query = database.orderByChild("startDate").equalTo(sibal)
-        database.addListenerForSingleValueEvent(valueEventListener);
-    }
 
-        var valueEventListener: ValueEventListener = object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {}
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.todoName)
+        itemList = findViewById<View>(R.id.todoListView) as ListView
+        itemList.adapter = adapter
 
-            override fun onDataChange(p0: DataSnapshot) {
-                for (data in p0.children) {
-                    val groupNum: String? = data.key
-                    val title = data.child("name")
-                    if (groupNum != null) {
-                        todoName.add(title.value.toString())
-                        adapter.notifyDataSetChanged()
-                        adapter.notifyDataSetInvalidated()
+        //유저의 속한 그룹 찾기
+        userRef.child(curUser).child("group").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) { }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                groupkeys.clear()
+                for (data in dataSnapshot.children) {
+                    var groupKey = data.key
+                    if(groupKey != null) {
+                        groupkeys.add(groupKey.toString())
                     }
                 }
             }
 
+        })
+
+        calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            todoName.clear()
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month+1)
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+            curDate = year.toString() + "-" + ((month.toString()).toInt()+1).toString() + "-" + dayOfMonth
+            adapter.notifyDataSetChanged()
+            adapter.notifyDataSetInvalidated()
+            totalTodo(groupkeys)    //이걸로 전체 일정 받아오니까 그룹버튼 눌렀을 때 따로 조건 처리
         }
-        curGrpRef.child("schedule").child(date1).addListenerForSingleValueEvent(valueEventListener)
+        totalTodo(groupkeys)    //이걸로 전체 일정 받아오니까 그룹버튼 눌렀을 때 따로 조건 처리
     }
 
-    private fun totalTodo(groupNum: Int) {
-
+    //전체 일정 보여주기(그룹이 하나라면 하나만 보여지겠쥬?)
+    private fun totalTodo(grpKey: ArrayList<String>) {
+        for(grp in grpKey) {
+            perGrpTodo(grp)
+        }
     }
 
-    private fun insertMode() {//삽입모드 초기화
+    //그룹별 일정 보여주기
+    private fun perGrpTodo(groupNum: String) {
+        groupRef.child(groupNum).child("schedule").child(curDate).addListenerForSingleValueEvent(todoNameValueEventListener)
+    }
+
+    private fun insertMode() {
         fab.setOnClickListener {
             insertTodo()
         }
-        deleteFab.setOnClickListener {
-            deleteTodo()
-        }
-    }
-
-    private fun updateMode() {
-        /*fab.setOnClickListener { updateTodo() }//완료버튼 클릭하면 수정
-        deleteFab.setOnClickListener { deleteTodo() }*/
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     private fun insertTodo() {
+        var mYear = 0
+        var mMonth = 0
+        var mDay = 0
+        var mHour = 0
+        var mMinute = 0
+        var btnDatePicker_start: Button?
+        var btnDatePicker_end: Button? = null
+        var txtTitle: EditText? = null
+        var txt_startDate: EditText? = null
+        var txt_startTime: EditText? = null
+        var txt_endDate: EditText? = null
+        var txt_endTime: EditText? = null
+        var txt_start: TextView? = null
+        var txt_end: TextView? = null
+        var switch1: Switch? = null
+        var flag: Boolean = false
         var cancelBtn: Button? = null
         var ok: Button? = null
         val view = layoutInflater.inflate(R.layout.activity_calendar_dialog_add, null, false).apply {
@@ -205,86 +224,44 @@ class EditActivity : AppCompatActivity() {
         cancelBtn!!.setOnClickListener {
             dialog.dismiss()
         }
-        //ok눌렀을 때도 리스너 알맞게 달기
         ok!!.setOnClickListener {
-            if(flag==true) {
+            var i = 1
+            var j = 0
+            if (flag == true) {
+                var wishRef = database.child("group").child(curGroup.toString()).child("wishlist")
 
-            asdf = txtTitle!!.text.toString()
-            var database_jm = FirebaseDatabase.getInstance().reference
-            var jm=database_jm.child("group").child(curGroup.toString()).child("wishlist")
-
-            jm.addListenerForSingleValueEvent(object : ValueEventListener {
-                var i: Int = 1
-                override fun onCancelled(dataSnapshot: DatabaseError) { }
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    for (data in dataSnapshot.children) {
-                        var wishListNum = data.key
-                    i++
+                wishRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(dataSnapshot: DatabaseError) { }
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (data in dataSnapshot.children) {
+                            var wishListNum = data.key
+                            i++
+                        }
+                        wishRef.child("wishlist" + i).setValue(txtTitle!!.text.toString()!!)
                     }
-                    jm.child("wishlist"+i).setValue(asdf!!)
+                })
+            //위시리스트
+            } else {
+                var todo = database.child("group").child(curGroup).child("schedule").child(txt_startDate!!.text.toString()!!)
+                todo.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(dataSnapshot: DatabaseError) {}
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (data in dataSnapshot.children) {
+                            var todoListNum = data.key
+                            j++
+                        }
 
-                }
-            })
-//위시리스트
-}else{
-                var database_jm = FirebaseDatabase.getInstance().reference
-                var jm = database_jm.child("group").child(curGroup.toString())
-            //할일
-
-}
-
-
-            /* val a = findViewById<View>(R.id.todoEditText) as EditText
-             a.setText(asdf.toString()) */
+                        todo.child(j.toString()).child("endDate").setValue(txt_endDate!!.text.toString())
+                        todo.child(j.toString()).child("endTime").setValue(txt_endTime!!.text.toString())
+                        //                       todo.child(i.toString()).child("memo").setValue(txtTitle!!.text.toString()!!)
+                        todo.child(j.toString()).child("name").setValue(txtTitle!!.text.toString())
+                        todo.child(j.toString()).child("startDate").setValue(txt_startDate!!.text.toString())
+                        todo.child(j.toString()).child("startTime").setValue(txt_startTime!!.text.toString())
+                    }
+                })
+            }
             dialog.dismiss()
         }
-    }
-
-    private fun nextId(): Int {
-        return 0
-    }
-
-    private fun updateTodo() {//할일수정
-
-    }
-
-    private fun deleteTodo() {
-        var closeBtn: Button? = null
-        val view = layoutInflater.inflate(R.layout.activity_calendar_dialog, null, false).apply {
-            closeBtn = findViewById<View>(R.id.btn_close) as Button
-            val dialog_adapter = TodoListDialogAdapter(this.context, items)
-            var listView = findViewById<View>(R.id.dialog_todoList) as ListView
-            listView.adapter = dialog_adapter
-            var remove_calendarBtn = findViewById<Button>(R.id.remove_calendar)
-            remove_calendarBtn.setOnClickListener {
-                //일정 삭제 버튼 누르면 삭제되게 구현
-            }
-        }
-        val dialog = AlertDialog.Builder(this)
-                .setView(view)
-                .create()
-        dialog.show()
-        closeBtn!!.setOnClickListener {
-            dialog.dismiss()
-        }
-    }
-
-    //액션버튼 메뉴 액션바에 집어 넣기
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.showgroupmenu, menu)
-        return true
-    }
-
-    //액션버튼 클릭 했을 때
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId){
-            R.id.groupmenuid-> {
-                val intent2 = Intent(this@EditActivity, ShowGroup::class.java)
-                intent2.putExtra("userNo",userNo)
-                startActivity(intent2)
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 }
