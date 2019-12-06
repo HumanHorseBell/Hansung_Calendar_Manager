@@ -2,17 +2,18 @@ package com.humanhorsebell.computer.hansung_calendar_manager
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.humanbell.TodoListAdapter
 import com.example.humanbell.TodoListDialogAdapter
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.activity_calendar_dialog_add.*
 import kotlinx.android.synthetic.main.activity_edit.*
 import org.w3c.dom.Text
 import java.util.*
@@ -21,19 +22,16 @@ import kotlin.collections.ArrayList
 
 
 class EditActivity : AppCompatActivity() {
-    //login한 user의 데이터를 가져와 group 0-N 까지의 뒤져 grpMem에 속하면 schedule에 들어가 해당 날짜의 데이터 추출,,,,,여기서는 임의로 user2의 데이터 추출
-    val databaseUser = FirebaseDatabase.getInstance().getReference()
-
-    val databaseGroup = FirebaseDatabase.getInstance().reference.child("group")
+    val database = FirebaseDatabase.getInstance().reference
+    val ref = database.child("group")
 
     var group: Group? = null;
 
     //임의로 user결정 및 group 결정
-    val curUser = "0"
-    val curGroup = 0
-    val database = FirebaseDatabase.getInstance().reference.child("group").child(curGroup.toString()).child("schedule").child("2019-12-05")
+    val curUser = "user0"
+    val curGroup = "0"
+    val curGrpRef = FirebaseDatabase.getInstance().reference.child("group").child(curGroup)
     val todoName = ArrayList<String>()
-    var switch1: Switch? = null
     lateinit var myAdapter: BaseAdapter
 
     var grpMems = ArrayList<String>()
@@ -41,41 +39,31 @@ class EditActivity : AppCompatActivity() {
     var items = ArrayList<Todo>()
     lateinit var adapter: BaseAdapter
     lateinit var itemList: ListView
-    var btnDatePicker_start: Button? = null
-    var btnDatePicker_end: Button? = null
-    var txtTitle: EditText? = null
-    var txt_startDate: EditText? = null
-    var txt_startTime: EditText? = null
-    var txt_endDate: EditText? = null
-    var txt_endTime: EditText? = null
-    var txt_start : TextView? =null
-    var txt_end : TextView? =null
 
     private var mYear = 0
     private var mMonth = 0
     private var mDay = 0
     private var mHour = 0
     private var mMinute = 0
-    private var asdf: String? = null
-    private var flag = false
+
+    /*지현 추가*/
+    val firebaseReference: FirebaseDatabase = FirebaseDatabase.getInstance()
+    val databasegroup = firebaseReference.reference.child("group")
+    var groupNo : String? = null //그룹 기본키
+    lateinit var userNo : String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
+
+        /*지현 추가*/
+        if(groupNo!=null) {
+            groupNo = intent.getStringExtra("groupNo")
+        }
+        userNo = intent.getStringExtra("userNo")
+
+
         insertMode()
-
-        myAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.todoName)
-
-        adapter = TodoListAdapter(this, items)
-        //날짜마다 List 달라져야 함
-        itemList = findViewById<View>(R.id.todoListView) as ListView
-        //itemList.adapter = adapter
-        itemList.adapter = myAdapter
-        //임의로 넣어 둔 것
-        items.add(Todo("test", "a", "a", "a", "a", "a", Comment("a", "a", "a", "a")))
-        todoName.add("sibal")
-
-        adapter.notifyDataSetChanged()
-        adapter.notifyDataSetInvalidated()
 
         val calendar: Calendar = Calendar.getInstance()
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
@@ -90,20 +78,26 @@ class EditActivity : AppCompatActivity() {
         database.addListenerForSingleValueEvent(valueEventListener);
     }
 
-    var valueEventListener: ValueEventListener = object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) {}
+        var valueEventListener: ValueEventListener = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
 
-        override fun onDataChange(p0: DataSnapshot) {
-            for (data in p0.children) {
-                val groupNum = data.key
-                val title = data.child("name")
-                if (groupNum != null) {
-                    todoName.add(groupNum.toString())
-                    myAdapter.notifyDataSetChanged()
-                    myAdapter.notifyDataSetInvalidated()
+            override fun onDataChange(p0: DataSnapshot) {
+                for (data in p0.children) {
+                    val groupNum: String? = data.key
+                    val title = data.child("name")
+                    if (groupNum != null) {
+                        todoName.add(title.value.toString())
+                        adapter.notifyDataSetChanged()
+                        adapter.notifyDataSetInvalidated()
+                    }
                 }
             }
+
         }
+        curGrpRef.child("schedule").child(date1).addListenerForSingleValueEvent(valueEventListener)
+    }
+
+    private fun totalTodo(groupNum: Int) {
 
     }
 
@@ -274,4 +268,23 @@ class EditActivity : AppCompatActivity() {
             dialog.dismiss()
         }
     }
+
+    //액션버튼 메뉴 액션바에 집어 넣기
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.showgroupmenu, menu)
+        return true
+    }
+
+    //액션버튼 클릭 했을 때
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId){
+            R.id.groupmenuid-> {
+                val intent2 = Intent(this@EditActivity, ShowGroup::class.java)
+                intent2.putExtra("userNo",userNo)
+                startActivity(intent2)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 }

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|center"
         android:text="Login"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="#FF00A2FF"
         android:textSize="40sp" />
 
     <LinearLayout
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="ID"
+            android:text="EMAIL"
             android:textSize="20sp" />
 
         <EditText
@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
+            android:hint="id@gmail.com"
             android:inputType="textPersonName" />
     </LinearLayout>
 
@@ -61,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName|textPassword" />
     </LinearLayout>
 
     <LinearLayout
@@ -77,7 +78,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="#FF00D8FF"
             android:text="회원가입"
             android:textSize="18sp" />
 
@@ -88,7 +89,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="#FF00D8FF"
             android:text="로그인"
             android:textSize="18sp" />
     </LinearLayout>

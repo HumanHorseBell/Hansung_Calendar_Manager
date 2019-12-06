@@ -7,18 +7,16 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/editTextemail"
+        android:id="@+id/editTextgroupname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:gravity="center"
-        android:hint="초대할 email입력"
+        android:hint="추가할 그룹이름 입력"
         android:inputType="textPersonName" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"/>
-
+        android:orientation="horizontal"></LinearLayout>
 </LinearLayout>
