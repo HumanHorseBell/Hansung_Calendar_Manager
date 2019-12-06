@@ -2,6 +2,7 @@ package com.humanhorsebell.computer.hansung_calendar_manager
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -59,6 +60,11 @@ class AddGroupActivity : AppCompatActivity() {
                 databaseschedule.addListenerForSingleValueEvent(checkscheduleID)
 
   }
+            val intent2 = Intent(this@AddGroupActivity, ShowGroup::class.java)
+
+            //기본키넘김=>얘로 나중에 사용자누군지 계속 구분해야지
+            intent2.putExtra("userNo", userNo)
+            startActivity(intent2)
             finish()
         }
 

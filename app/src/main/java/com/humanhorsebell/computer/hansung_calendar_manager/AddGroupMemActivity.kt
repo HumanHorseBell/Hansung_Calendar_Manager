@@ -25,6 +25,7 @@ class AddGroupMemActivity : AppCompatActivity() {
     lateinit var inputemail : EditText
     lateinit var adapter1 : ArrayAdapter<String?>
     lateinit var groupNo : String //그룹 기본키
+    lateinit var userNo : String //그룹 기본키
     lateinit var thisyearbirth : String
     //lateinit var scheduleid : Array<Int>
     lateinit var userName : String
@@ -36,26 +37,30 @@ class AddGroupMemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.listview_addgroup)
 
+        userNo = intent.getStringExtra("userNo")
+        groupNo = intent.getStringExtra("groupNo")
         groupName = intent.getStringExtra("groupName")
 
-        databasegroup.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
+        setTitle(groupName+"의 그룹원")
 
-                for (child in dataSnapshot.children) {
-
-                    if(child.child("grpName").value.toString().equals(groupName)) {
-                        groupNo = child.key.toString()
-
-                    }
-                }
-                adapter1.notifyDataSetChanged()
-                adapter1.notifyDataSetInvalidated()
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
-            }
-        })
+//        databasegroup.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//
+//                for (child in dataSnapshot.children) {
+//
+//                    if(child.child("grpName").value.toString().equals(groupName)) {
+//                        groupNo = child.key.toString()
+//
+//                    }
+//                }
+//                adapter1.notifyDataSetChanged()
+//                adapter1.notifyDataSetInvalidated()
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // Failed to read value
+//            }
+//        })
 
         adapter1 = ArrayAdapter(this, android.R.layout.simple_list_item_1, groupMemList)
 
@@ -85,6 +90,7 @@ class AddGroupMemActivity : AppCompatActivity() {
         floatingadduserbtn.setOnClickListener(onClickListener);
 
     }
+
     //그룹원 추가
     var onClickListener: View.OnClickListener = View.OnClickListener {
         //다이얼로그 만들기

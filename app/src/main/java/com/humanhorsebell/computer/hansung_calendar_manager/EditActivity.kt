@@ -3,8 +3,11 @@ package com.humanhorsebell.computer.hansung_calendar_manager
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
@@ -36,6 +39,10 @@ class EditActivity : AppCompatActivity() {
     lateinit var itemList: ListView
     var astarty = "1"
 
+    //유저키, 그룹키 intent로 받아오기
+    lateinit var userNo : String
+    lateinit var groupNo : String
+
     //일정의 제목DB만 가져오는 -
     val todoNameValueEventListener: ValueEventListener = object : ValueEventListener {
         override fun onCancelled(p0: DatabaseError) { }
@@ -63,6 +70,10 @@ class EditActivity : AppCompatActivity() {
         } else {
             fab.visibility = View.VISIBLE
         }
+
+        //유저키, 그룹키 받아오기
+        userNo = intent.getStringExtra("userNo")
+        groupNo = intent.getStringExtra("groupNo")
 
         insertMode()
 
@@ -263,5 +274,23 @@ class EditActivity : AppCompatActivity() {
             dialog.dismiss()
         }
     }
+
+//액션버튼 메뉴 액션바에 집어 넣기
+override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    menuInflater.inflate(R.menu.showgroupmenu, menu)
+    return true
+}
+
+//액션버튼 클릭 했을 때
+override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    when(item?.itemId){
+        R.id.groupmenuid-> {
+            val intent2 = Intent(this@EditActivity, ShowGroup::class.java)
+            intent2.putExtra("userNo",userNo)
+            startActivity(intent2)
+        }
+    }
+    return super.onOptionsItemSelected(item)
+}
 
 }

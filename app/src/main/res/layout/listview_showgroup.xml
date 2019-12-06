@@ -12,6 +12,16 @@
             android:id="@+id/listviewGroup"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1" >
+
+        </ListView>
+
+        <Button
+            android:id="@+id/addgroupbtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#03A9F4"
+            android:gravity="center"
+            android:text="그룹추가" />
 
 </LinearLayout>
