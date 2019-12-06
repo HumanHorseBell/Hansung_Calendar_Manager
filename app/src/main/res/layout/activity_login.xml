@@ -32,7 +32,7 @@
             android:textSize="20sp" />
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/editTextID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -56,7 +56,7 @@
             android:textSize="20sp" />
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/editTextPW"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -77,7 +77,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/colorPrimary"
             android:text="회원가입"
             android:textSize="18sp" />
 
@@ -88,7 +88,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/colorPrimary"
             android:text="로그인"
             android:textSize="18sp" />
     </LinearLayout>
