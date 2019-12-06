@@ -7,12 +7,12 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/editTextemail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:gravity="center"
-        android:hint="초대할 id입력"
+        android:hint="초대할 email입력"
         android:inputType="textPersonName" />
 
     <LinearLayout
