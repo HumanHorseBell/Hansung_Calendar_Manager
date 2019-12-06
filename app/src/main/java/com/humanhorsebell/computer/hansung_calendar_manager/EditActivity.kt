@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_edit.*
+import org.w3c.dom.Text
 import java.util.*
 
 import kotlin.collections.ArrayList
@@ -40,13 +41,16 @@ class EditActivity : AppCompatActivity() {
     var items = ArrayList<Todo>()
     lateinit var adapter: BaseAdapter
     lateinit var itemList: ListView
-    var btnDatePicker: Button? = null
-    var btnTimePicker: Button? = null
+    var btnDatePicker_start: Button? = null
+    var btnDatePicker_end: Button? = null
     var txtTitle: EditText? = null
-    var txtDate: EditText? = null
-    var txtTime: EditText? = null
+    var txt_startDate: EditText? = null
+    var txt_startTime: EditText? = null
+    var txt_endDate: EditText? = null
+    var txt_endTime: EditText? = null
+    var txt_start : TextView? =null
+    var txt_end : TextView? =null
 
-    var i: Int = 1
     private var mYear = 0
     private var mMonth = 0
     private var mDay = 0
@@ -125,64 +129,77 @@ class EditActivity : AppCompatActivity() {
         var cancelBtn: Button? = null
         var ok: Button? = null
         val view = layoutInflater.inflate(R.layout.activity_calendar_dialog_add, null, false).apply {
-            btnDatePicker = findViewById<View>(R.id.btn_date) as Button
-            btnTimePicker = findViewById<View>(R.id.btn_time) as Button
+            btnDatePicker_start = findViewById<View>(R.id.btn_start_date) as Button
+            btnDatePicker_end = findViewById<View>(R.id.btn_end_date) as Button
             txtTitle = findViewById<View>(R.id.calendar_title) as EditText
-            txtDate = findViewById<View>(R.id.in_date) as EditText
-            txtTime = findViewById<View>(R.id.in_time) as EditText
-            btnDatePicker!!.setOnClickListener {
-                val c = Calendar.getInstance()
-                mYear = c[Calendar.YEAR]
-                mMonth = c[Calendar.MONTH]
-                mDay = c[Calendar.DAY_OF_MONTH]
-                val datePickerDialog = DatePickerDialog(this.context,
-                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth -> txtDate!!.setText(year.toString()+ "-" +dayOfMonth.toString() + "-" + (monthOfYear + 1)) }, mYear, mMonth, mDay)
-                datePickerDialog.show()
-            }
-            btnTimePicker!!.setOnClickListener {
+            txt_startDate = findViewById<View>(R.id.start_date) as EditText
+            txt_startTime = findViewById<View>(R.id.start_time) as EditText
+            txt_endDate = findViewById<View>(R.id.end_date) as EditText
+            txt_endTime = findViewById<View>(R.id.end_time) as EditText
+            txt_start = findViewById<View>(R.id.txt_startdate) as TextView
+            txt_end = findViewById<View>(R.id.txt_enddate) as TextView
+            btnDatePicker_start!!.setOnClickListener {
                 val c = Calendar.getInstance()
                 mHour = c[Calendar.HOUR_OF_DAY]
                 mMinute = c[Calendar.MINUTE]
                 // Launch Time Picker Dialog
                 val timePickerDialog = TimePickerDialog(this.context,
-                        TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute -> txtTime!!.setText("$hourOfDay:$minute") }, mHour, mMinute, false)
+                        TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute -> txt_startTime!!.setText("$hourOfDay:$minute") }, mHour, mMinute, false)
                 timePickerDialog.show()
-            }
-            /*btnDatePicker!!.setOnClickListener {
-                val c = Calendar.getInstance()
+
                 mYear = c[Calendar.YEAR]
                 mMonth = c[Calendar.MONTH]
                 mDay = c[Calendar.DAY_OF_MONTH]
                 val datePickerDialog = DatePickerDialog(this.context,
-                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth -> txtDate!!.setText(dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year) }, mYear, mMonth, mDay)
+                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth -> txt_startDate!!
+                                .setText(year.toString()+ "-" +(monthOfYear + 1) + "-" +dayOfMonth ) }, mYear, mMonth, mDay)
                 datePickerDialog.show()
+
             }
-            btnTimePicker!!.setOnClickListener {
+            btnDatePicker_end!!.setOnClickListener {
                 val c = Calendar.getInstance()
                 mHour = c[Calendar.HOUR_OF_DAY]
                 mMinute = c[Calendar.MINUTE]
                 // Launch Time Picker Dialog
                 val timePickerDialog = TimePickerDialog(this.context,
-                        TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute -> txtTime!!.setText("$hourOfDay:$minute") }, mHour, mMinute, false)
+                        TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute -> txt_endTime!!.setText("$hourOfDay:$minute") }, mHour, mMinute, false)
                 timePickerDialog.show()
-            }*/
+
+                mYear = c[Calendar.YEAR]
+                mMonth = c[Calendar.MONTH]
+                mDay = c[Calendar.DAY_OF_MONTH]
+                val datePickerDialog = DatePickerDialog(this.context,
+                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth -> txt_endDate!!
+                                .setText(year.toString()+ "-" +(monthOfYear + 1) + "-" +dayOfMonth) }, mYear, mMonth, mDay)
+                datePickerDialog.show()
+
+
+            }
             cancelBtn = findViewById<View>(R.id.btn_cancel) as Button
             ok = findViewById<View>(R.id.btn_ok) as Button
             switch1 = findViewById(R.id.switch1)
             switch1!!.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
                     flag = true
-                    btnDatePicker!!.visibility = View.GONE
-                    btnTimePicker!!.visibility = View.GONE
-                    txtDate!!.visibility = View.GONE
-                    txtTime!!.visibility = View.GONE
+                    btnDatePicker_end!!.visibility = View.GONE
+                    btnDatePicker_start!!.visibility = View.GONE
+                    txt_startDate!!.visibility = View.GONE
+                    txt_startTime!!.visibility = View.GONE
+                    txt_endDate!!.visibility = View.GONE
+                    txt_endTime!!.visibility = View.GONE
+                    txt_start!!.visibility=View.GONE
+                    txt_end!!.visibility=View.GONE
 
                 } else {
                     flag = false
-                    btnDatePicker!!.visibility = View.VISIBLE
-                    btnTimePicker!!.visibility = View.VISIBLE
-                    txtDate!!.visibility = View.VISIBLE
-                    txtTime!!.visibility = View.VISIBLE
+                    btnDatePicker_end!!.visibility = View.VISIBLE
+                    btnDatePicker_start!!.visibility = View.VISIBLE
+                    txt_startDate!!.visibility = View.VISIBLE
+                    txt_startTime!!.visibility = View.VISIBLE
+                    txt_endDate!!.visibility = View.VISIBLE
+                    txt_endTime!!.visibility = View.VISIBLE
+                    txt_start!!.visibility=View.VISIBLE
+                    txt_end!!.visibility=View.VISIBLE
 
                 }
             })
@@ -198,12 +215,12 @@ class EditActivity : AppCompatActivity() {
         ok!!.setOnClickListener {
             if(flag==true) {
 
-            print(txtTitle)
             asdf = txtTitle!!.text.toString()
             var database_jm = FirebaseDatabase.getInstance().reference
             var jm=database_jm.child("group").child(curGroup.toString()).child("wishlist")
 
             jm.addListenerForSingleValueEvent(object : ValueEventListener {
+                var i: Int = 1
                 override fun onCancelled(dataSnapshot: DatabaseError) { }
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     for (data in dataSnapshot.children) {
@@ -211,7 +228,7 @@ class EditActivity : AppCompatActivity() {
                     i++
                     }
                     jm.child("wishlist"+i).setValue(asdf!!)
-                    i=1
+
                 }
             })
 //위시리스트
