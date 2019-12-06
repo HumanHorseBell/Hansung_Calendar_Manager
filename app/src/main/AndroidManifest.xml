@@ -13,14 +13,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".WishListActivity">
+        <activity android:name=".ScheduleActivity">
         </activity>
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
         </activity>
         <activity android:name=".TimelineActivity">
         </activity>
@@ -31,9 +31,10 @@
         <activity android:name=".JoinActivity" />
         <activity android:name=".EditActivity">
         </activity>
+
         <receiver android:name=".AlarmNotificationBroadcast">
             <intent-filter>
-                <action android:name="alarm.notification.broadcast"></action>
+                <action android:name="alarm.notification.broadcast" />
             </intent-filter>
         </receiver>
     </application>

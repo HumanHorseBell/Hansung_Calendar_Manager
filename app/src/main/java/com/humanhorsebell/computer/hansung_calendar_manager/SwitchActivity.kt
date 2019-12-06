@@ -21,11 +21,11 @@ fun switchActivity(context: Context, linearLayout: LinearLayout){
     buttons[2].text = "Timeline"
 
     buttons[0].setOnClickListener { View.OnClickListener{ v ->
-        //context.startActivity(Intent(context, 액티비티 이름))
+        context.startActivity(Intent(context, EditActivity::class.java))
     } }
 
     buttons[1].setOnClickListener { View.OnClickListener{v ->
-        //context.startActivity(Intent(context, 액티비티 이름))
+        context.startActivity(Intent(context, WishListActivity::class.java))
     } }
 
     buttons[2].setOnClickListener { View.OnClickListener { v ->

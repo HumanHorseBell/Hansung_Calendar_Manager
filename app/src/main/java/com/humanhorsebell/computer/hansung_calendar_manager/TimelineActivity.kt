@@ -24,8 +24,8 @@ class TimelineActivity : AppCompatActivity() {
         title = "Timeline"
         //userNumber = intent.getStringExtra("userNo")
         //userGroup = intent.getStringExtra("groupNo")
-        userNumber = "3"
-        //userGroup = "0"
+        userNumber = "3" //삭제
+        //userGroup = "0" //삭제
 
         listAdapter = ListAdapter(applicationContext, allSchedules)
         listView.adapter = listAdapter
