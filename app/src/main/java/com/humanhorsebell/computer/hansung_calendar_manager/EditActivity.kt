@@ -7,31 +7,25 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.humanbell.TodoListAdapter
 import com.example.humanbell.TodoListDialogAdapter
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.activity_calendar_dialog_add.*
 import kotlinx.android.synthetic.main.activity_edit.*
-import org.jetbrains.anko.find
 import java.util.*
 import kotlin.collections.ArrayList
 
 
 class EditActivity : AppCompatActivity() {
-    //login한 user의 데이터를 가져와 group 0-N 까지의 뒤져 grpMem에 속하면 schedule에 들어가 해당 날짜의 데이터 추출,,,,,여기서는 임의로 user2의 데이터 추출
-    val databaseUser = FirebaseDatabase.getInstance().reference.child("user")
-    val databaseGroup = FirebaseDatabase.getInstance().reference.child("group")
+    val database = FirebaseDatabase.getInstance().reference
+    val ref = database.child("group")
 
     var group: Group? = null;
 
     //임의로 user결정 및 group 결정
     val curUser = "user0"
     val curGroup = "0"
-    val database =  FirebaseDatabase.getInstance().reference.child("group").child(curGroup).child("schedule").child("2019-12-05")
+    val curGrpRef = FirebaseDatabase.getInstance().reference.child("group").child(curGroup)
     val todoName = ArrayList<String>()
-    lateinit var myAdapter: BaseAdapter
 
     var grpMems = ArrayList<String>()
     var schedules = ArrayList<Todo>()
@@ -43,31 +37,25 @@ class EditActivity : AppCompatActivity() {
     var txtTitle: EditText? = null
     var txtDate: EditText? = null
     var txtTime: EditText? = null
+    var switch1: Switch? = null
+    var flag: Boolean = false
     private var mYear = 0
     private var mMonth = 0
     private var mDay = 0
     private var mHour = 0
     private var mMinute = 0
-    private var asdf: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
         insertMode()
 
-        myAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.todoName)
-
-        adapter = TodoListAdapter(this, items)
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.todoName)
         //날짜마다 List 달라져야 함
         itemList = findViewById<View>(R.id.todoListView) as ListView
-        //itemList.adapter = adapter
-        itemList.adapter = myAdapter
+        itemList.adapter = adapter
         //임의로 넣어 둔 것
         items.add(Todo("test", "a", "a", "a", "a", "a", Comment("a", "a", "a", "a")))
-        todoName.add("sibal")
-
-        adapter.notifyDataSetChanged()
-        adapter.notifyDataSetInvalidated()
 
         val calendar: Calendar = Calendar.getInstance()
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
@@ -76,27 +64,27 @@ class EditActivity : AppCompatActivity() {
             calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         }
         //val curDate:String? = Calendar.YEAR.toString() + "-" + Calendar.MONTH.toString() + "-" + Calendar.DAY_OF_MONTH
-        val sibal = "2019-12-05"
+        val date1 = "2019-10-20"
 
         //val query = database.orderByChild("startDate").equalTo(sibal)
-        database.addListenerForSingleValueEvent(valueEventListener);
-    }
 
-    var valueEventListener: ValueEventListener = object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) { }
+        var valueEventListener: ValueEventListener = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
 
-        override fun onDataChange(p0: DataSnapshot) {
-            for(data in p0.children) {
-                val groupNum = data.key
-                val title = data.child("name")
-                if(groupNum != null) {
-                    todoName.add(groupNum.toString())
-                    myAdapter.notifyDataSetChanged()
-                    myAdapter.notifyDataSetInvalidated()
+            override fun onDataChange(p0: DataSnapshot) {
+                for (data in p0.children) {
+                    val groupNum: String? = data.key
+                    val title = data.child("name")
+                    if (groupNum != null) {
+                        todoName.add(title.value.toString())
+                        adapter.notifyDataSetChanged()
+                        adapter.notifyDataSetInvalidated()
+                    }
                 }
             }
-        }
 
+        }
+        curGrpRef.child("schedule").child(date1).addListenerForSingleValueEvent(valueEventListener)
     }
 
     private fun insertMode() {//삽입모드 초기화
@@ -106,15 +94,6 @@ class EditActivity : AppCompatActivity() {
         deleteFab.setOnClickListener {
             deleteTodo()
         }
-    }
-
-    private fun updateMode() {
-        /*fab.setOnClickListener { updateTodo() }//완료버튼 클릭하면 수정
-        deleteFab.setOnClickListener { deleteTodo() }*/
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     private fun insertTodo() {
@@ -139,11 +118,28 @@ class EditActivity : AppCompatActivity() {
                 val c = Calendar.getInstance()
                 mHour = c[Calendar.HOUR_OF_DAY]
                 mMinute = c[Calendar.MINUTE]
-                // Launch Time Picker Dialog
                 val timePickerDialog = TimePickerDialog(this.context,
                         TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute -> txtTime!!.setText("$hourOfDay:$minute") }, mHour, mMinute, false)
                 timePickerDialog.show()
             }
+            switch1 = findViewById(R.id.switch1)
+            switch1!!.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    flag = true
+                    btnDatePicker!!.visibility = View.GONE
+                    btnTimePicker!!.visibility = View.GONE
+                    txtDate!!.visibility = View.GONE
+                    txtTime!!.visibility = View.GONE
+
+                } else {
+                    flag = false
+                    btnDatePicker!!.visibility = View.VISIBLE
+                    btnTimePicker!!.visibility = View.VISIBLE
+                    txtDate!!.visibility = View.VISIBLE
+                    txtTime!!.visibility = View.VISIBLE
+
+                }
+            })
             cancelBtn = findViewById<View>(R.id.btn_cancel) as Button
             ok = findViewById<View>(R.id.btn_ok) as Button
         }
@@ -154,21 +150,30 @@ class EditActivity : AppCompatActivity() {
         cancelBtn!!.setOnClickListener {
             dialog.dismiss()
         }
-        //ok눌렀을 때도 리스너 알맞게 달기
         ok!!.setOnClickListener {
-            asdf = txtTitle!!.text.toString()
-            /* val a = findViewById<View>(R.id.todoEditText) as EditText
-             a.setText(asdf.toString()) */
+            var i = 1
+            if (flag == true) {
+                var wishRef = database.child("group").child(curGroup.toString()).child("wishlist")
+
+                wishRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(dataSnapshot: DatabaseError) { }
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        for (data in dataSnapshot.children) {
+                            var wishListNum = data.key
+                            i++
+                        }
+                        wishRef.child("wishlist" + i).setValue(txtTitle!!.text.toString()!!)
+                        i = 1
+                    }
+                })
+            //위시리스트
+            } else {
+                var todo = database.child("group").child(curGroup)
+                //할일
+
+            }
             dialog.dismiss()
         }
-    }
-
-    private fun nextId(): Int {
-        return 0
-    }
-
-    private fun updateTodo() {//할일수정
-
     }
 
     private fun deleteTodo() {
