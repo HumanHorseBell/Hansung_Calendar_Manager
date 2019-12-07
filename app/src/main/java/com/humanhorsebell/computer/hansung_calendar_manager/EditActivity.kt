@@ -74,7 +74,7 @@ class EditActivity : AppCompatActivity() {
         userNo = intent.getStringExtra("userNo")
         groupNo = intent.getStringExtra("groupNo")
 
-        switchActivity(applicationContext, linearLayout2, userNo, groupNo)
+        switchActivity(this, applicationContext, linearLayout2, userNo, groupNo)
 
 
         if (groupNo == null)

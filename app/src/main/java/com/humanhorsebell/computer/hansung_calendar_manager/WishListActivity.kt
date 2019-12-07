@@ -44,7 +44,7 @@ class WishListActivity : AppCompatActivity() {
         userNo = intent.getStringExtra("userNo")
         curGrp = "0"
 
-        switchActivity(applicationContext, linearBottom, userNo, curGrp)
+        switchActivity(this, applicationContext, linearBottom, userNo, curGrp)
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.wishlist)
 
         val listView = findViewById<View>(R.id.wishListView) as ListView

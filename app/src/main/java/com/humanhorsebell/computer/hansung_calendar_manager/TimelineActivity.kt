@@ -1,5 +1,6 @@
 package com.humanhorsebell.computer.hansung_calendar_manager
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -17,20 +18,21 @@ class TimelineActivity : AppCompatActivity() {
     lateinit var userNumber: String
     var userGroup: String? = null
     lateinit var listAdapter: ListAdapter
+    lateinit var timelineActivity: Activity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timeline)
         title = "Timeline"
-        //userNumber = intent.getStringExtra("userNo")
-        //userGroup = intent.getStringExtra("groupNo")
-        userNumber = "3" //삭제
-        //userGroup = "0" //삭제
+        userNumber = intent.getStringExtra("userNo")
+        userGroup = intent.getStringExtra("groupNo")
+
+        timelineActivity = this
 
         listAdapter = ListAdapter(applicationContext, allSchedules)
         listView.adapter = listAdapter
 
-        switchActivity(applicationContext, linearLayout, userNumber, userGroup)
+        switchActivity(this, applicationContext, linearLayout, userNumber, userGroup)
 
         var firebaseDatabase = FirebaseDatabase.getInstance().reference
 
