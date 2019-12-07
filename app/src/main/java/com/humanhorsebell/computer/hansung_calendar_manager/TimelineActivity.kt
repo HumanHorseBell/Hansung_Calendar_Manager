@@ -14,9 +14,9 @@ import kotlinx.android.synthetic.main.activity_timeline.*
 class TimelineActivity : AppCompatActivity() {
     val groupSchedules = HashMap<String, ArrayList<Schedule>>()
     val allSchedules = ArrayList<Schedule>()
-    lateinit var userNumber : String
+    lateinit var userNumber: String
     var userGroup: String? = null
-    lateinit var listAdapter : ListAdapter
+    lateinit var listAdapter: ListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,10 +39,9 @@ class TimelineActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val grpNumber = dataSnapshot.key.toString()
                 var groupNo: String
-                if(userGroup == null) {
+                if (userGroup == null) {
                     groupNo = dataSnapshot.child("grpName").value.toString()
-                }
-                else{
+                } else {
                     groupNo = ""
                     title = dataSnapshot.child("grpName").value.toString() + " Timeline"
                 }
@@ -50,20 +49,20 @@ class TimelineActivity : AppCompatActivity() {
                 val children = dataSnapshot.child("schedule").children
                 val schedulesInDay = ArrayList<Schedule>()
 
-                for(child in children){
+                for (child in children) {
                     val grandChildren = child.children
                     schedulesInDay.clear()
                     Log.d("checkFirebase", child.key.toString())
-                    for(grandChild in grandChildren){
+                    for (grandChild in grandChildren) {
                         val startDay = grandChild.child("startDate").value.toString()
                         val endDay = grandChild.child("endDate").value.toString()
                         val startTime = grandChild.child("startTime").value.toString()
                         val endTime = grandChild.child("endTime").value.toString()
                         val name = grandChild.child("name").value.toString()
                         val comments = grandChild.child("comment").children
-                        var picture : String? = null
-                        for(comment in comments){
-                            if(comment.hasChild("picture")) {
+                        var picture: String? = null
+                        for (comment in comments) {
+                            if (comment.hasChild("picture")) {
                                 picture = comment.child("picture").value.toString()
                                 break
                             }
@@ -85,20 +84,14 @@ class TimelineActivity : AppCompatActivity() {
             }
         }
 
-        if(userGroup == null) {
+        if (userGroup == null) {
             val singleUserGroupListener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val children = dataSnapshot.children
+                    val groups = dataSnapshot.child("group").children
 
-                    for (child in children) {
-                        if (child.key.equals(userNumber)) {
-                            val groups = child.child("group").children
-
-                            groups.forEach {
-                                if (it.value == "true")
-                                    firebaseDatabase.child("group").child(it.key.toString()).addListenerForSingleValueEvent(singleGroupScheduleListener)
-                            }
-                        }
+                    groups.forEach {
+                        if (it.value == "true")
+                            firebaseDatabase.child("group").child(it.key.toString()).addListenerForSingleValueEvent(singleGroupScheduleListener)
                     }
                 }
 
@@ -106,22 +99,37 @@ class TimelineActivity : AppCompatActivity() {
 
                 }
             }
-            firebaseDatabase.child("user").addListenerForSingleValueEvent(singleUserGroupListener)
-        }else{
-            val groupNo = userGroup!!
-            firebaseDatabase.child("group").child(groupNo).addListenerForSingleValueEvent(singleGroupScheduleListener)
+            Log.d("checkListener", "group == null")
+            firebaseDatabase.child("user").child(userNumber).addListenerForSingleValueEvent(singleUserGroupListener)
+        } else {
+            Log.d("checkListener", "group != null")
+            firebaseDatabase.child("group").child(userGroup!!).addListenerForSingleValueEvent(singleGroupScheduleListener)
         }
 
         val itemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-            var grpNo : String = ""
-            for(groupSchedule in groupSchedules){
-                if(groupSchedule.value[0].grpName == allSchedules[position].grpName){
-                    grpNo = groupSchedule.key
-                    //setAlarm(applicationContext, allSchedules[position])
+            var grpNo: String = ""
+            for (key in groupSchedules.keys) {
+                Log.d("checkExtras", "${groupSchedules[key]?.get(0)?.grpName} ${allSchedules[position].grpName}")
+                if (groupSchedules[key]?.get(0)?.grpName == allSchedules[position].grpName) {
+                    val scheduleIntent = Intent(applicationContext, ScheduleActivity::class.java)
+                    grpNo = key
+                    val values = groupSchedules.get(key)
+                    for (i in 0 until values!!.size) {
+                        if (values[i].startDate == allSchedules[position].startDate) {
+                            val day = values[i].startDate.day
+                            val scheduleNo = i.toString()
+                            Log.d("checkExtras", "${userNumber} ${grpNo} ${day} ${scheduleNo}")
+                            scheduleIntent.putExtra("userNo", userNumber)
+                            scheduleIntent.putExtra("groupNo", grpNo)
+                            scheduleIntent.putExtra("day", day)
+                            scheduleIntent.putExtra("scheduleNo", scheduleNo);
+                            startActivity(scheduleIntent)
+                            break
+                        }
+                    }
+                    break
                 }
             }
-            val nextIntent = Intent(this, this.javaClass) //수정
-            nextIntent.putExtra("userGroup", grpNo)
         }
         listView.onItemClickListener = itemClickListener
     }
