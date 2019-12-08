@@ -27,7 +27,6 @@ class WishListActivity : AppCompatActivity() {
     val wishListValueEventListener: ValueEventListener = object : ValueEventListener {
         override fun onCancelled(p0: DatabaseError) {}
         override fun onDataChange(p0: DataSnapshot) {
-            wishlist.clear()
             for (data in p0.children) {
                 val wishlistNum: String? = data.key
                 if (wishlistNum != null) {
