@@ -27,6 +27,7 @@ class WishListActivity : AppCompatActivity() {
     val wishListValueEventListener: ValueEventListener = object : ValueEventListener {
         override fun onCancelled(p0: DatabaseError) {}
         override fun onDataChange(p0: DataSnapshot) {
+            wishlist.clear()
             for (data in p0.children) {
                 val wishlistNum: String? = data.key
                 if (wishlistNum != null) {
@@ -48,10 +49,10 @@ class WishListActivity : AppCompatActivity() {
         groupNo = intent.getStringExtra("groupNo")
         Log.i("@@@@@@", "groupNo " + groupNo)
 
+        switchActivity(this, applicationContext, linearBottom, userNo, groupNo)
         if(groupNo == null)
             fab.visibility = View.GONE
 
-        switchActivity(applicationContext, linearBottom, userNo, groupNo)
         adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.wishlist)
 
         val listView = findViewById<View>(R.id.wishListView) as ListView
