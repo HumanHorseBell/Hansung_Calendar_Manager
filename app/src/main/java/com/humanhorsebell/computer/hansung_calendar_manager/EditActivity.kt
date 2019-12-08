@@ -45,13 +45,13 @@ class EditActivity : AppCompatActivity() {
         override fun onDataChange(p0: DataSnapshot) {
             for (data in p0.children) {
                 val groupNum: String? = data.key
-                val title = data.child("name")
-                if (groupNum != null) {
-                    todoName.add(title.value.toString())
-                    adapter.notifyDataSetChanged()
-                    adapter.notifyDataSetInvalidated()
+                val title = data.child("name").value.toString()
+                if (groupNum != null && title != null) {
+                    todoName.add(title)
                 }
             }
+            adapter.notifyDataSetChanged()
+            adapter.notifyDataSetInvalidated()
         }
 
     }
@@ -60,8 +60,6 @@ class EditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
-
-        insertMode()
 
         val calendar: Calendar = Calendar.getInstance()
         curDate = calendar.get(Calendar.YEAR).toString() + "-" + (calendar.get(Calendar.MONTH).toString().toInt() + 1).toString() + "-" + calendar.get(Calendar.DAY_OF_MONTH).toString()
@@ -86,22 +84,6 @@ class EditActivity : AppCompatActivity() {
             fab.visibility = View.VISIBLE
         }
 
-        //유저의 속한 그룹 찾기
-        userRef.child(userNo).child("group").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {}
-
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                groupkeys.clear()
-                for (data in dataSnapshot.children) {
-                    var groupKey = data.key
-                    if (groupKey != null) {
-                        groupkeys.add(groupKey.toString())
-                    }
-                }
-            }
-
-        })
-
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             todoName.clear()
             calendar.set(Calendar.YEAR, year)
@@ -113,8 +95,6 @@ class EditActivity : AppCompatActivity() {
             adapter.notifyDataSetInvalidated()
             allOrOneGrp(groupNo)
         }
-        allOrOneGrp(groupNo)
-
 
         itemList.setOnItemClickListener { parent, view, position, id ->
             var clickTodo = todoName[position]
@@ -122,21 +102,42 @@ class EditActivity : AppCompatActivity() {
                 perGrpTodoDetail(clickTodo, grp)
             }
         }
+
+        insertMode()
+
+        allOrOneGrp(groupNo)
     }
 
     private fun allOrOneGrp(grpNum: String?) {
+        todoName.clear()
+        adapter.notifyDataSetChanged()
+        adapter.notifyDataSetInvalidated()
         if (grpNum != null) {
             perGrpTodo(grpNum!!)
         } else {
-            totalTodo(groupkeys)
+            totalTodo()
         }
     }
 
     //전체 일정 보여주기(그룹이 하나라면 하나만 보여지겠쥬?)
-    private fun totalTodo(grpKey: ArrayList<String>) {
-        for (grp in grpKey) {
-            perGrpTodo(grp)
-        }
+    private fun totalTodo() {
+        todoName.clear()
+        //유저의 속한 그룹 찾기
+        userRef.child(userNo).child("group").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                groupkeys.clear()
+                for (data in dataSnapshot.children) {
+                    var groupKey = data.key.toString()
+                    if (groupKey != null) {
+                        groupkeys.add(groupKey)
+                        perGrpTodo(groupKey)
+                    }
+                }
+            }
+
+        })
     }
 
     //그룹별 일정 보여주기
@@ -152,7 +153,6 @@ class EditActivity : AppCompatActivity() {
                 for (data in p0.children) {
                     var todoKey = data.key
                     var curTodoName = data.child("name").value.toString()
-                    Log.i("@@@@@@", "curTodoName : " + curTodoName)
                     if (curTodoName.equals(itemName)) {
                         selectedNum = todoKey
                         selectedGrp = groupNum
@@ -308,17 +308,27 @@ class EditActivity : AppCompatActivity() {
                         for (data in dataSnapshot.children) {
                             j++
                         }
-                        todo.child(j.toString()).child("endDate").setValue(txt_endDate!!.text.toString())
-                        todo.child(j.toString()).child("endTime").setValue(txt_endTime!!.text.toString())
-                        //                       todo.child(i.toString()).child("memo").setValue(txtTitle!!.text.toString()!!)
-                        todo.child(j.toString()).child("name").setValue(txtTitle!!.text.toString())
-                        todo.child(j.toString()).child("startDate").setValue(txt_startDate!!.text.toString())
-                        todo.child(j.toString()).child("startTime").setValue(txt_startTime!!.text.toString())
                     }
+                })
+                todo.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {  }
+
+                    override fun onDataChange(p0: DataSnapshot) {
+                        if(txtTitle!!.text != null) {
+                            todo.child(j.toString()).child("endDate").setValue(txt_endDate!!.text.toString())
+                            todo.child(j.toString()).child("endTime").setValue(txt_endTime!!.text.toString())
+                            //                       todo.child(i.toString()).child("memo").setValue(txtTitle!!.text.toString()!!)
+                            todo.child(j.toString()).child("name").setValue(txtTitle!!.text.toString())
+                            todo.child(j.toString()).child("startDate").setValue(txt_startDate!!.text.toString())
+                            todo.child(j.toString()).child("startTime").setValue(txt_startTime!!.text.toString())
+                        }
+                    }
+
                 })
             }
             dialog.dismiss()
         }
+        todoName.clear()
     }
 
     //액션버튼 메뉴 액션바에 집어 넣기
