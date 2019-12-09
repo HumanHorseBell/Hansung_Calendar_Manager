@@ -100,6 +100,7 @@ class EditActivity : AppCompatActivity() {
             var clickTodo = todoName[position]
             for (grp in groupkeys) {
                 perGrpTodoDetail(clickTodo, grp)
+
             }
         }
 
@@ -321,6 +322,7 @@ class EditActivity : AppCompatActivity() {
                             todo.child(j.toString()).child("name").setValue(txtTitle!!.text.toString())
                             todo.child(j.toString()).child("startDate").setValue(txt_startDate!!.text.toString())
                             todo.child(j.toString()).child("startTime").setValue(txt_startTime!!.text.toString())
+
                         }
                     }
 
