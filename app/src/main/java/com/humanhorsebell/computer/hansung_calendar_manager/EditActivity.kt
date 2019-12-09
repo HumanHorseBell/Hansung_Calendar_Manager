@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.activity_edit.*
 import kotlinx.android.synthetic.main.activity_timeline.*
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 
 class EditActivity : AppCompatActivity() {
@@ -25,7 +26,7 @@ class EditActivity : AppCompatActivity() {
     val userRef = database.child("user")
 
     lateinit var curDate: String
-    val todoName = ArrayList<String>()
+    var todoName = ArrayList<String>()
 
     var groupkeys = ArrayList<String>()
     lateinit var adapter: BaseAdapter
@@ -64,10 +65,6 @@ class EditActivity : AppCompatActivity() {
         val calendar: Calendar = Calendar.getInstance()
         curDate = calendar.get(Calendar.YEAR).toString() + "-" + (calendar.get(Calendar.MONTH).toString().toInt() + 1).toString() + "-" + calendar.get(Calendar.DAY_OF_MONTH).toString()
 
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.todoName)
-        itemList = findViewById<View>(R.id.todoListView) as ListView
-        itemList.adapter = adapter
-
         //유저키, 그룹키 받아오기
         userNo = intent.getStringExtra("userNo")
         groupNo = intent.getStringExtra("groupNo")
@@ -83,6 +80,9 @@ class EditActivity : AppCompatActivity() {
         } else {
             fab.visibility = View.VISIBLE
         }
+
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, this.todoName)
+        itemList = findViewById<View>(R.id.todoListView) as ListView
 
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             todoName.clear()
@@ -103,9 +103,12 @@ class EditActivity : AppCompatActivity() {
             }
         }
 
-        insertMode()
+        fab.setOnClickListener {
+            insertTodo()
+        }
 
-        allOrOneGrp(groupNo)
+        itemList.adapter = adapter
+        //allOrOneGrp(groupNo)
     }
 
     private fun allOrOneGrp(grpNum: String?) {
@@ -170,12 +173,6 @@ class EditActivity : AppCompatActivity() {
             }
 
         })
-    }
-
-    private fun insertMode() {
-        fab.setOnClickListener {
-            insertTodo()
-        }
     }
 
     private fun insertTodo() {
@@ -302,7 +299,7 @@ class EditActivity : AppCompatActivity() {
                 //위시리스트
             } else {
                 var todo = database.child("group").child(groupNo!!).child("schedule").child(txt_startDate!!.text.toString()!!)
-                todo.addListenerForSingleValueEvent(object : ValueEventListener {
+                todo.addValueEventListener(object : ValueEventListener {
                     override fun onCancelled(dataSnapshot: DatabaseError) {}
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         for (data in dataSnapshot.children) {
@@ -310,17 +307,17 @@ class EditActivity : AppCompatActivity() {
                         }
                     }
                 })
-                todo.addListenerForSingleValueEvent(object : ValueEventListener {
+                var curTodo =  todo.child(j.toString())
+                curTodo.addValueEventListener(object : ValueEventListener {
                     override fun onCancelled(p0: DatabaseError) {  }
 
                     override fun onDataChange(p0: DataSnapshot) {
                         if(txtTitle!!.text != null) {
-                            todo.child(j.toString()).child("endDate").setValue(txt_endDate!!.text.toString())
-                            todo.child(j.toString()).child("endTime").setValue(txt_endTime!!.text.toString())
-                            //                       todo.child(i.toString()).child("memo").setValue(txtTitle!!.text.toString()!!)
-                            todo.child(j.toString()).child("name").setValue(txtTitle!!.text.toString())
-                            todo.child(j.toString()).child("startDate").setValue(txt_startDate!!.text.toString())
-                            todo.child(j.toString()).child("startTime").setValue(txt_startTime!!.text.toString())
+                            curTodo.child("endDate").setValue(txt_endDate!!.text.toString())
+                            curTodo.child("endTime").setValue(txt_endTime!!.text.toString())
+                            curTodo.child("name").setValue(txtTitle!!.text.toString())
+                            curTodo.child("startDate").setValue(txt_startDate!!.text.toString())
+                            curTodo.child("startTime").setValue(txt_startTime!!.text.toString())
                         }
                     }
 
@@ -328,7 +325,7 @@ class EditActivity : AppCompatActivity() {
             }
             dialog.dismiss()
         }
-        todoName.clear()
+
     }
 
     //액션버튼 메뉴 액션바에 집어 넣기
