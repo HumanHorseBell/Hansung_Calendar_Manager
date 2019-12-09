@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "506076072341",
+    "firebase_url": "https://hansungcalendarmanager.firebaseio.com",
+    "project_id": "hansungcalendarmanager",
+    "storage_bucket": "hansungcalendarmanager.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:506076072341:android:895c3e7ac0843c74848e9c",
+        "android_client_info": {
+          "package_name": "com.humanhorsebell.computer.hansung_calendar_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "506076072341-f2en9d9pb4s0di2f6jl22i7uv166pdb8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.humanhorsebell.computer.hansung_calendar_manager",
+            "certificate_hash": "39d2d0e699caed3674dfef8b3b924dacbb12133e"
+          }
+        },
+        {
+          "client_id": "506076072341-s9b0huiuvjl25gq3lt05ah8nvga6m8kp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBu7lSslOkWR7b6hhFAnvG8LY-eQyJO2Kw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "506076072341-s9b0huiuvjl25gq3lt05ah8nvga6m8kp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:506076072341:android:7ba419b371a0c788848e9c",
+        "android_client_info": {
+          "package_name": "com.leehoyoon.computer.hansung_calendar_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "506076072341-kane9lk5vft2fccc9ovprrq8ktqf5mom.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leehoyoon.computer.hansung_calendar_manager",
+            "certificate_hash": "39d2d0e699caed3674dfef8b3b924dacbb12133e"
+          }
+        },
+        {
+          "client_id": "506076072341-s9b0huiuvjl25gq3lt05ah8nvga6m8kp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBu7lSslOkWR7b6hhFAnvG8LY-eQyJO2Kw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "506076072341-s9b0huiuvjl25gq3lt05ah8nvga6m8kp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
