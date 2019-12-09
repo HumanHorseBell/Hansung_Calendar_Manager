@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.activity_edit.*
 import kotlinx.android.synthetic.main.activity_timeline.*
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 
 
 class EditActivity : AppCompatActivity() {
@@ -26,7 +25,7 @@ class EditActivity : AppCompatActivity() {
     val userRef = database.child("user")
 
     lateinit var curDate: String
-    var todoName = ArrayList<String>()
+    val todoName = ArrayList<String>()
 
     var groupkeys = ArrayList<String>()
     lateinit var adapter: BaseAdapter

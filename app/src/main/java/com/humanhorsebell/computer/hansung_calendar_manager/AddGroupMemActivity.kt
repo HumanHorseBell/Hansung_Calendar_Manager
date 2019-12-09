@@ -179,7 +179,7 @@ class AddGroupMemActivity : AppCompatActivity() {
                 //group->g1->schedule->user의 생일->키->endTime : vlaue(23:59)
                 databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("endTime").setValue("11:59")
                 //group->g1->schedule->user의 생일->키->name : vlaue("생일")
-                databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("name").setValue("생일")
+                databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("name").setValue(userName+" 님의 생일")
                 //group->g1->schedule->user의 생일->키->memo : vlaue(추가mem name + "생일")
                 databaseschedule.child(thisyearbirth).child(scheduleid.toString()).child("memo").setValue(userName + "님의 생일")
 

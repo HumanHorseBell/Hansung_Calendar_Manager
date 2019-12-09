@@ -1,20 +1,29 @@
 {
   "project_info": {
-    "project_number": "24750219931",
-    "firebase_url": "https://hansung-calendar.firebaseio.com",
-    "project_id": "hansung-calendar",
-    "storage_bucket": "hansung-calendar.appspot.com"
+    "project_number": "436830517430",
+    "firebase_url": "https://calendar-jh.firebaseio.com",
+    "project_id": "calendar-jh",
+    "storage_bucket": "calendar-jh.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:24750219931:android:f7b13802a3e184e2d2dc3e",
+        "mobilesdk_app_id": "1:436830517430:android:9964485282f8c2bdfd8e17",
         "android_client_info": {
           "package_name": "com.humanhorsebell.computer.hansung_calendar_manager"
         }
       },
       "oauth_client": [
         {
+          "client_id": "436830517430-dodcfibuvbp3j7l5phlhjc1a9mhup5jb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.humanhorsebell.computer.hansung_calendar_manager",
+            "certificate_hash": "948615a87c86310bb2a6c9eaa3dd30973f5ab3f5"
+          }
+        },
+        {
+          "client_id": "436830517430-1aotd48sps943pqfcodbapsjb3jj9kba.apps.googleusercontent.com",
           "client_id": "24750219931-vkvjjmfkd3e6kll292aqadihkf955odc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -37,14 +46,14 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBLJE3-3hW1h7BsmjWAa3MlOpIsh36DPaY"
+          "current_key": "AIzaSyDLzdkKbCQLzv6vaCU8x8GslTneyv-3i5w"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "24750219931-7vs1tqipmo8p9b46i3dm7723eihncgn5.apps.googleusercontent.com",
+              "client_id": "436830517430-1aotd48sps943pqfcodbapsjb3jj9kba.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
