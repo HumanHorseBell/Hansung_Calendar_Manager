@@ -97,6 +97,7 @@ class EditActivity : AppCompatActivity() {
 
         itemList.setOnItemClickListener { parent, view, position, id ->
             var clickTodo = todoName[position]
+            searchGrp()
             for (grp in groupkeys) {
                 perGrpTodoDetail(clickTodo, grp)
             }
@@ -121,13 +122,29 @@ class EditActivity : AppCompatActivity() {
         }
     }
 
+    private fun searchGrp() {
+        userRef.child(userNo).child("group").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                groupkeys.clear()
+                for (data in dataSnapshot.children) {
+                    var groupKey = data.key.toString()
+                    if (groupKey != null) {
+                        groupkeys.add(groupKey)
+                    }
+                }
+            }
+
+        })
+    }
+
+
     //전체 일정 보여주기(그룹이 하나라면 하나만 보여지겠쥬?)
     private fun totalTodo() {
         todoName.clear()
         //유저의 속한 그룹 찾기
         userRef.child(userNo).child("group").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
-
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 groupkeys.clear()
                 for (data in dataSnapshot.children) {
