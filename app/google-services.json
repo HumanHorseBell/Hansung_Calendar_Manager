@@ -24,6 +24,23 @@
         },
         {
           "client_id": "436830517430-1aotd48sps943pqfcodbapsjb3jj9kba.apps.googleusercontent.com",
+          "client_id": "24750219931-vkvjjmfkd3e6kll292aqadihkf955odc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.humanhorsebell.computer.hansung_calendar_manager",
+            "certificate_hash": "bde8611c44e8045bd24c2870a3257d82a05f5e52"
+          }
+        },
+        {
+          "client_id": "24750219931-h4ev5732d9qp5bl4otp560u92tci99s3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.humanhorsebell.computer.hansung_calendar_manager",
+            "certificate_hash": "e7e515871b100bd73ea0758c096de64d672b5e7c"
+          }
+        },
+        {
+          "client_id": "24750219931-7vs1tqipmo8p9b46i3dm7723eihncgn5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
